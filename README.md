@@ -12,6 +12,7 @@ Resulting in output
 
 `Accuracy: 99.82`
 
+Decycling sets for k = 7 to k = 10 are provided.
 
 
 
