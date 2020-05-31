@@ -4,9 +4,13 @@ import itertools
 import pandas as pd
 from keras.models import Sequential
 from keras import layers
-
-from sklearn.model_selection import train_test_split
-
+from matplotlib import pyplot
+from sklearn.datasets import make_circles
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
 
 def oneHotEncode(kmer):
     mapping = dict(zip("ACGT", range(4)))    
@@ -52,6 +56,17 @@ if __name__ == "__main__":
     model.summary()
     X = np.array(trainInput)
     y = np.array(trainOutput)
-    model.fit(X, y, epochs=50, batch_size=10)
-    _, accuracy = model.evaluate(X, y)
-    print('Accuracy: %.2f' % (accuracy*100)) 
+    hist = model.fit(X, y, epochs=50, batch_size=10, verbose=0)
+    predictions = model.predict_classes(X, verbose=0)
+    # accuracy: (tp + tn) / (p + n)
+    accuracy = accuracy_score(y, predictions)
+    print('Accuracy ((TP + TN) / (P + N)): %f' % accuracy)
+    # precision tp / (tp + fp)
+    precision = precision_score(y, predictions)
+    print('Precision (TP / (TP + FP)): %f' % precision)
+    # recall: tp / (tp + fn)
+    recall = recall_score(y, predictions)
+    print('Recall (TP / (TP + FN)): %f' % recall)
+    # f1: 2 tp / (2 tp + fp + fn)
+    f1 = f1_score(y, predictions)
+    print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
