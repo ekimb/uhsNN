@@ -10,9 +10,9 @@ Use decycling set to train the NN and evaluate accuracy with:
 
 Resulting in output
 
-`Accuracy ((TP + TN) / (P + N)): 0.996399<br>`
-`Precision (TP / (TP + FP)): 0.989713`
-`Recall (TP / (TP + FN)): 0.985068`
+`Accuracy ((TP + TN) / (P + N)): 0.996399`<br>
+`Precision (TP / (TP + FP)): 0.989713`<br>
+`Recall (TP / (TP + FN)): 0.985068`<br>
 `F1 Score (2TP / (2TP + FP + FN)): 0.987385`
 
 Decycling sets for k = 7 to k = 11 are provided.
