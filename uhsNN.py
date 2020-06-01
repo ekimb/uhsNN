@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import itertools
 import pandas as pd
+import tensorflow as tf
 from keras.models import Sequential
 from keras import layers
 from matplotlib import pyplot
@@ -30,18 +31,23 @@ def encodeReverse(kmerList):
             elif i % 4 == 3:
                 kmer = kmer + 'T'
     return kmer
-if __name__ == "__main__":
-    bases = ['A', 'C', 'G', 'T']
-    UHSpath = sys.argv[1]
-    k = int(sys.argv[2])
-    kmerArray = [''.join(p) for p in itertools.product(bases, repeat=k)]
-    f = open(UHSpath, "r")
+
+def constructUHSarray(path):
+    f = open(path, "r")
     UHSarray = []
-    trainInput = []
-    trainOutput = []
     for line in f:
         UHSkmer = line.rstrip()
         UHSarray.append(UHSkmer)
+    return UHSarray
+def enumerateKmers(k):
+    bases = ['A', 'C', 'G', 'T']
+    kmerArray = [''.join(p) for p in itertools.product(bases, repeat=k)]
+    return kmerArray
+def decyclingPredict(decycPath, k):
+    trainInput = []
+    trainOutput = []
+    UHSarray = constructUHSarray(decycPath)
+    kmerArray = enumerateKmers(k)
     for kmer in kmerArray:
         trainInput.append(np.array(oneHotEncode(kmer).flatten()))
         if kmer in UHSarray:
@@ -56,17 +62,76 @@ if __name__ == "__main__":
     model.summary()
     X = np.array(trainInput)
     y = np.array(trainOutput)
-    hist = model.fit(X, y, epochs=50, batch_size=10, verbose=0)
+    model.fit(X, y, epochs=20, batch_size=10)
     predictions = model.predict_classes(X, verbose=0)
-    # accuracy: (tp + tn) / (p + n)
     accuracy = accuracy_score(y, predictions)
     print('Accuracy ((TP + TN) / (P + N)): %f' % accuracy)
-    # precision tp / (tp + fp)
     precision = precision_score(y, predictions)
     print('Precision (TP / (TP + FP)): %f' % precision)
-    # recall: tp / (tp + fn)
     recall = recall_score(y, predictions)
     print('Recall (TP / (TP + FN)): %f' % recall)
-    # f1: 2 tp / (2 tp + fp + fn)
     f1 = f1_score(y, predictions)
     print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
+
+def additionalPredict(k, listL):
+    decycPath = 'data/decyc' + str(k) + '.txt'
+    trainInput = []
+    trainOutput = []
+    decycKmers = constructUHSarray(decycPath)
+    kmerArray = enumerateKmers(k)
+    for kmer in kmerArray:
+        if kmer in decycKmers:
+            kmerArray.remove(kmer)
+    for L in listL:
+        Lpath = 'data/DOCKS' + str(k) + '_' + L + '.txt'
+        print('Reading k-mers for k = %d and L = %s from %s' % (k, L, Lpath))
+        addKmers = constructUHSarray(Lpath)
+        for kmer in kmerArray:
+            encodedKmer = np.append(oneHotEncode(kmer).flatten(), int(L))
+            trainInput.append(np.array(encodedKmer))
+            if kmer in addKmers:
+                trainOutput.append(1)
+            else:
+                trainOutput.append(0)
+    model = Sequential()
+    model.add(layers.Dense(1024, input_dim=4*k+1, activation='relu'))
+    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[tf.keras.metrics.PrecisionAtRecall(recall=0.99)])
+    model.summary()
+    X = np.array(trainInput)
+    y = np.array(trainOutput)
+    addModel = model.fit(X, y, epochs=100, batch_size=256)
+    predictions = model.predict_classes(X)
+    for i in range(len(predictions)):
+        print(predictions[i], "expected ", y[i])
+    accuracy = accuracy_score(y, predictions)
+    print('Accuracy ((TP + TN) / (P + N)): %f' % accuracy)
+    precision = precision_score(y, predictions)
+    print('Precision (TP / (TP + FP)): %f' % precision)
+    recall = recall_score(y, predictions)
+    print('Recall (TP / (TP + FN)): %f' % recall)
+    f1 = f1_score(y, predictions)
+    print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
+    predictInput = []
+    for kmer in kmerArray:
+            encodedKmer = np.append(oneHotEncode(kmer).flatten(), 35)
+            predictInput.append(np.array(encodedKmer))
+    Xnew = np.array(predictInput)
+    predictionsNew = model.predict_classes(Xnew)
+    f = open("735.txt", "w")
+    for i in range(len(predictionsNew)):
+        if predictionsNew[i] == 1:
+            f.write(encodeReverse(Xnew[i])+"\n")
+
+
+if __name__ == "__main__":
+    k = int(sys.argv[1])
+    listL = sys.argv[2].split(',')
+    additionalPredict(k, listL)
+
+    
+    
+    
+    
+    
