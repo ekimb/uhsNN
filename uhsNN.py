@@ -3,6 +3,7 @@ import sys
 import itertools
 import pandas as pd
 import tensorflow as tf
+import argparse
 from keras.models import Sequential
 from keras import layers
 from matplotlib import pyplot
@@ -74,7 +75,7 @@ def decyclingPredict(decycPath, k):
     f1 = f1_score(y, predictions)
     print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
 
-def additionalPredict(k, listL):
+def additionalPredict(k, listL, file):
     decycPath = 'data/decyc' + str(k) + '.txt'
     trainInput = []
     trainOutput = []
@@ -147,10 +148,17 @@ def additionalPredict(k, listL):
 
 
 if __name__ == "__main__":
-    k = int(sys.argv[1])
-    listL = sys.argv[2].split(',')
-    additionalPredict(k, listL)
-    
+    parser = argparse.ArgumentParser(description='Trains a model with additional k-mer sets (.txt files) as input.')
+    parser.add_argument('-k', metavar='k', type=int, help='K-mer size (k) for the UHS')
+    parser.add_argument('-L', metavar='L', type=int, nargs='+', help='Sequence sizes (L) for the UHS')
+    parser.add_argument('--file', type=open, help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
+    parser.add_argument('-e', metavar='e', type=int, help='Number of epochs')
+    parser.add_argument('-b', metavar='b', type=int, help='Batch size')
+
+    args = parser.parse_args()
+    k = args.k
+    listL = args.L
+    additionalPredict(k, listL, args.file)
     
     
     
