@@ -12,6 +12,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve
 
 def oneHotEncode(kmer):
     mapping = dict(zip("ACGT", range(4)))    
@@ -94,16 +95,36 @@ def additionalPredict(k, listL):
             else:
                 trainOutput.append(0)
     model = Sequential()
-    model.add(layers.Dense(1024, input_dim=4*k+1, activation='relu'))
-    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dense(64, input_dim=4*k+1, activation='relu'))
+    model.add(layers.Dense(8, activation='relu'))
+    model.add(layers.Dense(8, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[tf.keras.metrics.PrecisionAtRecall(recall=0.99)])
     model.summary()
     X = np.array(trainInput)
     y = np.array(trainOutput)
     addModel = model.fit(X, y, epochs=100, batch_size=256)
-    predictions = model.predict_classes(X)
-    for i in range(len(predictions)):
+    with open('./modelArch.json', 'w') as fout:
+        fout.write(model.to_json())
+    model.save_weights('./modelWeights.h5', overwrite=True)
+    predictions = model.predict_proba(X)
+    auc = roc_auc_score(y, predictions)
+    print("AUC: ", auc)
+    fpr, tpr, thresholds = roc_curve(y, predictions)
+
+    # plot no skill
+    pyplot.plot([0, 1], [0, 1], linestyle='--')
+    # plot the roc curve for the model
+    pyplot.plot(fpr, tpr)
+    # show the plot
+    pyplot.show()
+
+
+    '''for i in range(len(predictions)):
+        if predictions[i][0] > 0.5:
+            predictions[i][0] == 1.0
+        else:
+            predictions[i][0] == 0.0
         print(predictions[i], "expected ", y[i])
     accuracy = accuracy_score(y, predictions)
     print('Accuracy ((TP + TN) / (P + N)): %f' % accuracy)
@@ -122,14 +143,14 @@ def additionalPredict(k, listL):
     f = open("735.txt", "w")
     for i in range(len(predictionsNew)):
         if predictionsNew[i] == 1:
-            f.write(encodeReverse(Xnew[i])+"\n")
+            f.write(encodeReverse(Xnew[i])+"\n")'''
 
 
 if __name__ == "__main__":
     k = int(sys.argv[1])
     listL = sys.argv[2].split(',')
     additionalPredict(k, listL)
-
+    
     
     
     

@@ -5,6 +5,8 @@ __pycache__/
 
 #.txt files
 *.txt
+*.json
+*.h5
 
 # C extensions
 *.so
