@@ -1,21 +1,14 @@
 # uhsNN: Generating universal hitting sets using deep neural networks
 
-First, generate a decycling set with `pasha`:
+First, use `preproc.py` to download and preprocess sets:
 
-`./pasha 7 20 24 decyc7.txt hit720.txt`
+`python preproc.py -k [k-mer size]`
 
-Use decycling set to train the NN and evaluate accuracy with:
+This will create a `.uhs` file in your directory to train the NN with.
 
-`python uhsNN.py decyc7.txt 7`
+Train the NN and evaluate accuracy with:
 
-Resulting in output
-
-`Accuracy ((TP + TN) / (P + N)): 0.996399`<br>
-`Precision (TP / (TP + FP)): 0.989713`<br>
-`Recall (TP / (TP + FN)): 0.985068`<br>
-`F1 Score (2TP / (2TP + FP + FN)): 0.987385`
-
-Decycling sets for k = 7 to k = 11 are provided.
+`python uhsNN.py -k [k-mer size] -file [UHS file] -e [number of epochs] -b [batch size]`
 
 
 
