@@ -120,7 +120,8 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
     addModel = model.fit(X, y, epochs=epochs, batch_size=batchSize)
     with open('./modelArch.json', 'w') as fout:
         fout.write(model.to_json())
-    model.save_weights('./modelWeights.h5', overwrite=True)
+    weightString = './modelWeights_' + UHSfile + '.h5'
+    model.save_weights(weightString, overwrite=True)
     predictions = model.predict_proba(X)
     auc = roc_auc_score(y, predictions)
     print("AUC: ", auc)
