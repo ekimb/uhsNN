@@ -36,11 +36,27 @@ def encodeReverse(kmerList):
 
 def constructUHSarray(path):
     f = open(path, "r")
-    UHSarray = []
+    decycArray = []
+    addArray = {}
+    decycKmerSwitch = 0
+    addKmerSwitch = 0
     for line in f:
-        UHSkmer = line.rstrip()
-        UHSarray.append(UHSkmer)
-    return UHSarray
+        if line[0] == '>' and line.strip('\n').strip('>') == 'decycling':
+            decycKmerSwitch = 1
+            addKmerSwitch = 0
+        elif line[0] == '>':
+            decycKmerSwitch = 0
+            addKmerSwitch = 1
+            seqLength = int(line.strip('\n').strip('>'))
+            addArray[seqLength] = []
+        else:
+            if decycKmerSwitch == 1 and addKmerSwitch == 0:
+                kmer = line.rstrip()
+                decycArray.append(kmer)
+            elif decycKmerSwitch == 0 and addKmerSwitch == 1:
+                kmer = line.rstrip()
+                addArray[seqLength].append(kmer)
+    return decycArray, addArray
 def enumerateKmers(k):
     bases = ['A', 'C', 'G', 'T']
     kmerArray = [''.join(p) for p in itertools.product(bases, repeat=k)]
@@ -75,23 +91,20 @@ def decyclingPredict(decycPath, k):
     f1 = f1_score(y, predictions)
     print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
 
-def additionalPredict(k, listL, file):
-    decycPath = 'data/decyc' + str(k) + '.txt'
+def additionalPredict(k, UHSfile, epochs, batchSize):
     trainInput = []
     trainOutput = []
-    decycKmers = constructUHSarray(decycPath)
+    decycArray, addArray = constructUHSarray(UHSfile)
     kmerArray = enumerateKmers(k)
     for kmer in kmerArray:
-        if kmer in decycKmers:
+        if kmer in decycArray:
             kmerArray.remove(kmer)
-    for L in listL:
-        Lpath = 'data/DOCKS' + str(k) + '_' + L + '.txt'
-        print('Reading k-mers for k = %d and L = %s from %s' % (k, L, Lpath))
-        addKmers = constructUHSarray(Lpath)
+    for L in addArray.keys():
+        print('Reading k-mers for k = %d and L = %s' % (k, L))
         for kmer in kmerArray:
             encodedKmer = np.append(oneHotEncode(kmer).flatten(), int(L))
             trainInput.append(np.array(encodedKmer))
-            if kmer in addKmers:
+            if kmer in addArray[L]:
                 trainOutput.append(1)
             else:
                 trainOutput.append(0)
@@ -104,7 +117,7 @@ def additionalPredict(k, listL, file):
     model.summary()
     X = np.array(trainInput)
     y = np.array(trainOutput)
-    addModel = model.fit(X, y, epochs=100, batch_size=256)
+    addModel = model.fit(X, y, epochs=epochs, batch_size=batchSize)
     with open('./modelArch.json', 'w') as fout:
         fout.write(model.to_json())
     model.save_weights('./modelWeights.h5', overwrite=True)
@@ -150,15 +163,16 @@ def additionalPredict(k, listL, file):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Trains a model with additional k-mer sets (.txt files) as input.')
     parser.add_argument('-k', metavar='k', type=int, help='K-mer size (k) for the UHS')
-    parser.add_argument('-L', metavar='L', type=int, nargs='+', help='Sequence sizes (L) for the UHS')
-    parser.add_argument('--file', type=open, help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
+    parser.add_argument('--file', metavar= 'file', help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
     parser.add_argument('-e', metavar='e', type=int, help='Number of epochs')
     parser.add_argument('-b', metavar='b', type=int, help='Batch size')
 
     args = parser.parse_args()
     k = args.k
-    listL = args.L
-    additionalPredict(k, listL, args.file)
+    UHSfile = args.file
+    epochs = args.e
+    batchSize = args.b
+    additionalPredict(k, UHSfile, epochs, batchSize)
     
     
     
