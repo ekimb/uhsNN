@@ -8,7 +8,7 @@ This will create a `.uhs` file in your directory to train the NN with.
 
 Train the NN and evaluate accuracy with:
 
-`python uhsNN.py -k [k-mer size] -file [UHS file] -e [number of epochs] -b [batch size]`
+`python uhsNN.py -k [k-mer size] -f [UHS file] -e [number of epochs] -b [batch size]`
 
 
 
