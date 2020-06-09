@@ -164,7 +164,7 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Trains a model with additional k-mer sets (.txt files) as input.')
     parser.add_argument('-k', metavar='k', type=int, help='K-mer size (k) for the UHS')
-    parser.add_argument('--file', metavar= 'file', help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
+    parser.add_argument('-f', metavar= 'file', help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
     parser.add_argument('-e', metavar='e', type=int, help='Number of epochs')
     parser.add_argument('-b', metavar='b', type=int, help='Batch size')
 
