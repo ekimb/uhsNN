@@ -101,13 +101,22 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
             kmerArray.remove(kmer)
     for L in addArray.keys():
         print('Reading k-mers for k = %d and L = %s' % (k, L))
-        for kmer in kmerArray:
-            encodedKmer = np.append(oneHotEncode(kmer).flatten(), int(L))
-            trainInput.append(np.array(encodedKmer))
-            if kmer in addArray[L]:
-                trainOutput.append(1)
-            else:
-                trainOutput.append(0)
+        print("Writing .dat file...")
+        with open("kmers.dat", "w") as f:
+            for kmer in kmerArray:
+                oneHot = oneHotEncode(kmer).flatten()
+                f.write(" ".join(map(str, oneHot)))
+                f.write('\n')
+                encodedKmer = np.append(oneHot, int(L))
+                trainInput.append(np.array(encodedKmer))
+                if kmer in addArray[L]:
+                    trainOutput.append(1)
+                else:
+                    trainOutput.append(0)
+        f.close()
+
+            
+
     model = Sequential()
     model.add(layers.Dense(64, input_dim=4*k+1, activation='relu'))
     model.add(layers.Dense(8, activation='relu'))
@@ -120,8 +129,8 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
     addModel = model.fit(X, y, epochs=epochs, batch_size=batchSize)
     with open('./modelArch.json', 'w') as fout:
         fout.write(model.to_json())
-    weightString = './modelWeights_' + UHSfile + '.h5'
-    model.save_weights(weightString, overwrite=True)
+    weightString = './model_' + UHSfile + '.h5'
+    model.save(weightString, include_optimizer=False)
     predictions = model.predict_proba(X)
     auc = roc_auc_score(y, predictions)
     print("AUC: ", auc)
@@ -170,7 +179,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     k = args.k
-    UHSfile = args.file
+    UHSfile = args.f
     epochs = args.e
     batchSize = args.b
     additionalPredict(k, UHSfile, epochs, batchSize)
