@@ -9,22 +9,22 @@ enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-#      -W -Wall -Wextra -Wpedantic \
-#      -Waggressive-loop-optimizations \
-#      -Wcast-align -Wcast-qual \
-#      -Wdouble-promotion \
-#      -Wfloat-equal -Wformat=2 -Wformat-signedness -Wframe-larger-than=32768 \
-#      -Wlogical-op \
-#      -Wodr -Wold-style-cast \
-#      -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
-#      -Wtrampolines \
-#      -Wuseless-cast -Wno-unused-but-set-parameter \
-#      -Wwrite-strings"
-#      CACHE INTERNAL ""
-#  )
-#endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+      -W -Wall -Wextra -Wpedantic \
+      -Waggressive-loop-optimizations \
+      -Wcast-align -Wcast-qual \
+      -Wdouble-promotion \
+      -Wfloat-equal -Wformat=2 -Wformat-signedness -Wframe-larger-than=32768 \
+      -Wlogical-op \
+      -Wodr -Wold-style-cast \
+      -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
+      -Wtrampolines \
+      -Wuseless-cast -Wno-unused-but-set-parameter \
+      -Wwrite-strings"
+      CACHE INTERNAL ""
+  )
+endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
