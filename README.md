@@ -15,6 +15,7 @@ Example command: `python train.py -k 8 -f DOCKS8_preproc.uhs -e 100 -b 256 -o my
 This will create a `.model` file in the output directory.
 
 Then in the main directory, run
+
 `cmake .`<br>
 `cd build`<br>
 `cmake --build .`
