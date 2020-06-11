@@ -309,6 +309,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             }
         }
         t.data_[4*k] = (l+k-1);
+        vector<float>().swap(t.data_);
         Tensor out = model(t);
         return out;
     }
@@ -349,6 +350,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                     hittingStream << label << "\n";
                     hittingCount++;
                 }
+                vector<float>().swap(tout.data_);
             }
         }
         topologicalSort();
