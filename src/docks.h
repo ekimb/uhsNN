@@ -336,7 +336,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
         #pragma omp parallel for num_threads(threads)
-        for (int i = 0; i < edgeNum; i++) {
+        for (int i = 0; i < (int)edgeNum; i++) {
             if (edgeArray[i] == 1) {
                 Tensor tout = makePrediction(i, model, threads);
                 double res;
