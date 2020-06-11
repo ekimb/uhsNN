@@ -4,34 +4,34 @@ cmake_minimum_required(VERSION 3.9)
 
 enable_language(CXX)
 
-set(CMAKE_C_COMPILER   "/usr/bin/clang")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+#set(CMAKE_C_COMPILER   "/Users/baris/miniconda3/envs/uhsNNenv/clang")
+#set(CMAKE_CXX_COMPILER "/Users/baris/miniconda3/envs/uhsNNenv/clang-cpp")
 
 set(CMAKE_CXX_STANDARD 17)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-      -W -Wall -Wextra -Wpedantic \
-      -Waggressive-loop-optimizations \
-      -Wcast-align -Wcast-qual \
-      -Wdouble-promotion \
-      -Wfloat-equal -Wformat=2 -Wformat-signedness -Wframe-larger-than=32768 \
-      -Wlogical-op \
-      -Wodr -Wold-style-cast \
-      -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
-      -Wtrampolines \
-      -Wuseless-cast -Wno-unused-but-set-parameter \
-      -Wwrite-strings"
-      CACHE INTERNAL ""
-  )
-endif()
+#if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+#      -W -Wall -Wextra -Wpedantic \
+#      -Waggressive-loop-optimizations \
+#      -Wcast-align -Wcast-qual \
+#      -Wdouble-promotion \
+#      -Wfloat-equal -Wformat=2 -Wformat-signedness -Wframe-larger-than=32768 \
+#      -Wlogical-op \
+#      -Wodr -Wold-style-cast \
+#      -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
+#      -Wtrampolines \
+#      -Wuseless-cast -Wno-unused-but-set-parameter \
+#      -Wwrite-strings"
+#      CACHE INTERNAL ""
+#  )
+#endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
       -Weverything \
       -Wno-class-varargs -Wno-padded \
       -Wc++17-compat \
-      -Wno-c++98-compat -Wno-c++98-compat-pedantic"
+      -Wno-c++98-compat -Wno-c++98-compat-pedantic -fopenmp"
       # -Wno-c++14-extensions
       # -Wno-c++17-extensions
       # -Wno-switch-enum -Wno-unused-macros
