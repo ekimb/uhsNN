@@ -338,21 +338,18 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fprev = new float[vertexExp];
         #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < (int)edgeNum; i++) {
-            if (edgeArray[i] == 1) {
-                Tensor tout = makePrediction(i, model, threads);
-                double res;
-                for (auto&& it : tout.data_) {
-                    res = static_cast<double>(it);
-                }
-                tout.data_.clear();
-                tout.data_.shrink_to_fit();
-                if (res >= threshold) {
-                    removeEdge(i);
-                    string label = getLabel(i);
-                    hittingStream << label << "\n";
-                    hittingCount++;
-                }
-                
+            Tensor tout = makePrediction(i, model, threads);
+            double res;
+            for (auto&& it : tout.data_) {
+                res = static_cast<double>(it);
+            }
+            tout.data_.clear();
+            tout.data_.shrink_to_fit();
+            if (res >= threshold) {
+                removeEdge(i);
+                string label = getLabel(i);
+                hittingStream << label << "\n";
+                hittingCount++;
             }
         }
         topologicalSort();
