@@ -7,10 +7,11 @@ enable_language(CXX)
 #set(CMAKE_C_COMPILER   "/Users/baris/miniconda3/envs/uhsNNenv/clang")
 #set(CMAKE_CXX_COMPILER "/Users/baris/miniconda3/envs/uhsNNenv/clang-cpp")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+      -std=c++14 \
       -W -Wall -Wextra -Wpedantic \
       -Waggressive-loop-optimizations \
       -Wcast-align -Wcast-qual \
