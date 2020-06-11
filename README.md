@@ -16,8 +16,8 @@ This will create a `.model` file in the output directory.
 
 Then in the main directory, run
 
-`cmake .`<br>
-`cd build`<br>
+`mkdir build && cd build`<br>
+`cmake ..`<br>
 `cmake --build .`
 
 which will compile the prediction executable.
