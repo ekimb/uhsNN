@@ -14,12 +14,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       -W -Wall -Wextra -Wpedantic \
       -Waggressive-loop-optimizations \
       -Wcast-align -Wcast-qual \
-      -Wdouble-promotion -Wduplicated-branches -Wduplicated-cond \
+      -Wdouble-promotion \
       -Wfloat-equal -Wformat=2 -Wformat-signedness -Wframe-larger-than=32768 \
       -Wlogical-op \
-      -Wnull-dereference \
       -Wodr -Wold-style-cast \
-      -Wshadow=local -Wshift-overflow=2 -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
+      -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
       -Wtrampolines \
       -Wuseless-cast -Wno-unused-but-set-parameter \
       -Wwrite-strings"
