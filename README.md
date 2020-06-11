@@ -24,9 +24,9 @@ which will compile the prediction executable.
 
 Run the prediction executable with the command
 
-`./predict [model file] [k-mer size] [sequence size] [decycling set output] [additional set output]`
+`./predict [model file] [k-mer size] [sequence size] [decycling set output] [additional set output] [prediction threshold]`
 
-Example command: `./predict myModel.model 8 25 decyc8.txt add825.txt`
+Example command: `./predict myModel.model 8 25 decyc8.txt add825.txt 0.5`
 
 
 
