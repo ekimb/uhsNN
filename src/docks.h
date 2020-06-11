@@ -309,8 +309,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             }
         }
         t.data_[4*k] = (l+k-1);
-        vector<float>().swap(t.data_);
         Tensor out = model(t);
+        vector<float>().swap(t.data_);
         return out;
     }
     int HittingML(int L, const char *hittingPath, string modelPath, double threshold, int threads) {
@@ -344,13 +344,14 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                 for (auto&& it : tout.data_) {
                     res = static_cast<double>(it);
                 }
+                vector<float>().swap(tout.data_);
                 if (res >= threshold) {
                     removeEdge(i);
                     string label = getLabel(i);
                     hittingStream << label << "\n";
                     hittingCount++;
                 }
-                vector<float>().swap(tout.data_);
+                
             }
         }
         topologicalSort();
