@@ -282,7 +282,6 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
     Tensor makePrediction (int index, Model &model, int threads) {
         Tensor t{4*k+1};
         string kmer = getLabel(index);
-        #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < k; i++) {
             if (kmer[i] == 'A') {
                 t.data_[4*i] = 1;
