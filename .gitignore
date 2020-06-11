@@ -8,7 +8,7 @@ __pycache__/
 *.h5
 *.cmake
 
-
+CMakeFiles/
 #data
 data/*
 
