@@ -1,0 +1,3 @@
+/Users/baris/uhsNN/CMakeFiles/rebuild_cache.dir
+/Users/baris/uhsNN/CMakeFiles/edit_cache.dir
+/Users/baris/uhsNN/CMakeFiles/predict.dir

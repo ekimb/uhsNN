@@ -4,9 +4,10 @@ __pycache__/
 *$py.class
 
 #.txt files
-*.txt
 *.json
 *.h5
+*.cmake
+
 
 #data
 data/*
