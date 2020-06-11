@@ -10,8 +10,8 @@ namespace keras2cpp {
 
     Stream& Stream::reads(char* ptr, size_t count) {
         stream_.read(ptr, static_cast<ptrdiff_t>(count));
-        if (!stream_)
-            throw std::runtime_error("File read failure");
+        //if (!stream_)
+        //    throw std::runtime_error("File read failure");
         return *this;
     }
 }
