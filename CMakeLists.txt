@@ -22,7 +22,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       -Wtrampolines \
       -Wuseless-cast -Wno-unused-but-set-parameter \
       -Wwrite-strings \
-      -fopenmp"
+      -fopenmp \
+      -lrt"
       CACHE INTERNAL ""
   )
 endif()
