@@ -113,7 +113,7 @@ def additionalPredict(k, UHSfile, epochs, batchSize, outputPath):
             
 
     model = Sequential()
-    model.add(layers.Dense(64, input_dim=4*k+1, activation='relu'))
+    model.add(layers.Dense(1024, input_dim=4*k+1, activation='relu'))
     model.add(layers.Dense(8, activation='relu'))
     model.add(layers.Dense(8, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
@@ -122,9 +122,15 @@ def additionalPredict(k, UHSfile, epochs, batchSize, outputPath):
     X = np.array(trainInput)
     y = np.array(trainOutput)
     addModel = model.fit(X, y, epochs=epochs, batch_size=batchSize)
-    from keras2cpp import export_model
+    '''from keras2cpp import export_model
     modelString = outputPath + '.model'
-    export_model(model, modelString)
+    export_model(model, modelString)'''
+    model_json = model.to_json()
+    with open("model.json", "w") as json_file:
+        json_file.write(model_json)
+    # serialize weights to HDF5
+    model.save_weights("model.h5")
+    print("Saved model to disk")
     predictions = model.predict_proba(X)
     auc = roc_auc_score(y, predictions)
     print("AUC: ", auc)

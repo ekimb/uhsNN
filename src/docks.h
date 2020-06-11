@@ -19,6 +19,12 @@ using keras2cpp::Tensor;
 using keras2cpp::Stream;
 using namespace std;
 using byte8 = uint8_t;
+struct record
+{
+   int index;
+   std::string kmer;
+   float pred;
+};
 class DOCKS {
     public:
         byte8* finished;
@@ -92,6 +98,22 @@ class DOCKS {
             i = i / ALPHABET_SIZE;
         }
         return finalString;
+    }
+    int getIndex(string label) {
+    /**
+    Gets index of the input edge label.
+    @param i: label of edge.
+    @return The index of the edge.
+    */
+        map<char, int> alphabetMap;
+        for (int i = 0; i < ALPHABET_SIZE; i++) alphabetMap.insert(pair<char,int>(ALPHABET[i], i));
+        int index = 0;
+        for (int j = 0; j < k; j++) {
+            //cout << alphabetMap[label[j]] << endl;
+            index += alphabetMap[label[j]] * pow(4, k-j-1);
+            //cout << index << endl;
+        }
+        return index;
     }
     int maxLength() {
     /**
@@ -218,7 +240,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
 @param L: Sequence length.
 @return imaxHittingNum: Index of vertex with maximum hitting number.
 */  
-        omp_set_dynamic(0);
+        //omp_set_dynamic(0);
         double maxHittingNum = 0;
         int imaxHittingNum = -1;
         for (int i = 0; i < (int)edgeNum; i++) {
@@ -234,7 +256,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
     @param L: Sequence length.
     @return 1: True if path calculation completes.
     */
-        omp_set_dynamic(0);
+        //omp_set_dynamic(0);
         curr = 1;
         vertexExp2 = vertexExp * 2;
         vertexExp3 = vertexExp * 3;
@@ -262,7 +284,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < (int)edgeNum; i++) hittingNumArray[i] = 0;
         while (curr <= L) {
-            #pragma omp parallel for num_threads(threads)
+           #pragma omp parallel for num_threads(threads)
             for (int i = 0; i < vertexExp; i++) {
                 int index = (i * 4);
                 Fcurr[i] = edgeArray[index]*Fprev[index & vertexExpMask] + edgeArray[index + 1]*Fprev[(index + 1) & vertexExpMask] + edgeArray[index + 2]*Fprev[(index + 2) & vertexExpMask] + edgeArray[index + 3]*Fprev[(index + 3) & vertexExpMask];
@@ -314,14 +336,14 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         t.data_.shrink_to_fit();
         return out;
     }
-    int HittingML(int L, const char *hittingPath, string modelPath, double threshold, int threads) {
+    int HittingML(int L, const char *hittingPath, double threshold, int threads, vector<record> &v) {
     /**
     Performs hitting set calculations with parallelization
     and without randomization, counting L-k+1-long paths.
     @param L: Sequence length, hittingFile: Output file destination.
     @return hittingCount: Size of hitting set.
     */
-        auto model = Model::load(modelPath);
+        //auto model = Model::load(modelPath);
         vertexExp = pow(ALPHABET_SIZE, k-1);
         int imaxHittingNum = -1;
         ofstream hittingStream(hittingPath);
@@ -337,17 +359,12 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
         #pragma omp parallel for num_threads(threads)
-        for (int i = 0; i < (int)edgeNum; i++) {
-            Tensor tout = makePrediction(i, model, threads);
-            double res;
-            for (auto&& it : tout.data_) {
-                res = static_cast<double>(it);
-            }
-            tout.data_.clear();
-            tout.data_.shrink_to_fit();
-            if (res >= threshold) {
-                removeEdge(i);
-                string label = getLabel(i);
+        for (auto it : v) {
+            //std::cout << it.kmer << it.index << it.pred << std::endl;
+            if (it.pred >= threshold) {
+                std::cout << "Found model prediction above threshold" << std::endl;
+                removeEdge(it.index);
+                string label = it.kmer;
                 hittingStream << label << "\n";
                 hittingCount++;
             }
