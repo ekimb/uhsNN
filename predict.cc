@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
     const char *decyclingPath = argv[4];
     const char *hittingPath = argv[5];
     double threshold = stod(argv[6]);
+    int threads = stoi(argv[6]);
     const double PI = 3.14159;
     string directory;
     ofstream decyclingStream(decyclingPath);
@@ -37,7 +38,7 @@ int main(int argc, char* argv[]) {
     cout << "Decycling set size: " << decyclingSize << endl;
     decyclingStream.close();
     //clock_gettime(CLOCK_MONOTONIC, &start);
-    int hittingSize = docks.HittingML(L, hittingPath, modelPath, threshold);
+    int hittingSize = docks.HittingML(L, hittingPath, modelPath, threshold, threads);
     //clock_gettime(CLOCK_MONOTONIC, &finish);
     //elapsed = (finish.tv_sec - start.tv_sec);
     //elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;

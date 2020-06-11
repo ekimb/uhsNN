@@ -32,7 +32,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
       -Weverything \
       -Wno-class-varargs -Wno-padded \
       -Wc++17-compat \
-      -Wno-c++98-compat -Wno-c++98-compat-pedantic -fopenmp"
+      -Wno-c++98-compat -Wno-c++98-compat-pedantic \
+      --Xpreprocessor -fopenmp"
       # -Wno-c++14-extensions
       # -Wno-c++17-extensions
       # -Wno-switch-enum -Wno-unused-macros
@@ -40,9 +41,18 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   )
 endif()
 
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(OpenMP_C_FLAG "-fopenmp=libomp -Wno-unused-command-line-argument")
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(OpenMP_CXX_FLAG "-fopenmp=libomp -Wno-unused-command-line-argument")
+endif()
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g"
     CACHE INTERNAL ""
 )
+
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
     -g -pg -no-pie \
