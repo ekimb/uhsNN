@@ -36,11 +36,11 @@ int main(int argc, char* argv[]) {
     int decyclingSize = decyclingSet.size();
     cout << "Decycling set size: " << decyclingSize << endl;
     decyclingStream.close();
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    //clock_gettime(CLOCK_MONOTONIC, &start);
     int hittingSize = docks.HittingML(L, hittingPath, modelPath, threshold);
-    clock_gettime(CLOCK_MONOTONIC, &finish);
-    elapsed = (finish.tv_sec - start.tv_sec);
-    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+    //clock_gettime(CLOCK_MONOTONIC, &finish);
+    //elapsed = (finish.tv_sec - start.tv_sec);
+    //elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     cout << elapsed << " seconds." << endl; 
     cout << "Hitting set size: " << hittingSize << endl << endl;
     return 0;

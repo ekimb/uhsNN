@@ -21,7 +21,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       -Wstrict-aliasing=2 -Wsuggest-final-methods -Wsuggest-final-types -Wsync-nand \
       -Wtrampolines \
       -Wuseless-cast -Wno-unused-but-set-parameter \
-      -Wwrite-strings"
+      -Wwrite-strings \
+      -fopenmp"
       CACHE INTERNAL ""
   )
 endif()
