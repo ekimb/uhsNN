@@ -278,9 +278,10 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         return 1;
     }
-    Tensor makePrediction (int index, Model &model) {
+    Tensor makePrediction (int index, Model &model, int threads) {
         Tensor t{4*k+1};
         string kmer = getLabel(index);
+        #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < k; i++) {
             if (kmer[i] == 'A') {
                 t.data_[4*i] = 1;
@@ -334,10 +335,10 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         hittingStream.open(hittingPath); 
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
-        std::cout << "here" << std::endl;
+        #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < edgeNum; i++) {
             if (edgeArray[i] == 1) {
-                Tensor tout = makePrediction(i, model);
+                Tensor tout = makePrediction(i, model, threads);
                 double res;
                 for (auto&& it : tout.data_) {
                     res = static_cast<double>(it);
