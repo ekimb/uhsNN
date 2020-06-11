@@ -91,7 +91,7 @@ def decyclingPredict(decycPath, k):
     f1 = f1_score(y, predictions)
     print('F1 Score (2TP / (2TP + FP + FN)): %f' % f1)
 
-def additionalPredict(k, UHSfile, epochs, batchSize):
+def additionalPredict(k, UHSfile, epochs, batchSize, outputPath):
     trainInput = []
     trainOutput = []
     decycArray, addArray = constructUHSarray(UHSfile)
@@ -101,19 +101,14 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
             kmerArray.remove(kmer)
     for L in addArray.keys():
         print('Reading k-mers for k = %d and L = %s' % (k, L))
-        print("Writing .dat file...")
-        with open("kmers.dat", "w") as f:
-            for kmer in kmerArray:
-                oneHot = oneHotEncode(kmer).flatten()
-                f.write(" ".join(map(str, oneHot)))
-                f.write('\n')
-                encodedKmer = np.append(oneHot, int(L))
-                trainInput.append(np.array(encodedKmer))
-                if kmer in addArray[L]:
-                    trainOutput.append(1)
-                else:
-                    trainOutput.append(0)
-        f.close()
+        for kmer in kmerArray:
+            oneHot = oneHotEncode(kmer).flatten()
+            encodedKmer = np.append(oneHot, int(L))
+            trainInput.append(np.array(encodedKmer))
+            if kmer in addArray[L]:
+                trainOutput.append(1)
+            else:
+                trainOutput.append(0)
 
             
 
@@ -127,10 +122,9 @@ def additionalPredict(k, UHSfile, epochs, batchSize):
     X = np.array(trainInput)
     y = np.array(trainOutput)
     addModel = model.fit(X, y, epochs=epochs, batch_size=batchSize)
-    with open('./modelArch.json', 'w') as fout:
-        fout.write(model.to_json())
-    weightString = './model_' + UHSfile + '.h5'
-    model.save(weightString, include_optimizer=False)
+    from keras2cpp import export_model
+    modelString = outputPath + '.model'
+    export_model(model, modelString)
     predictions = model.predict_proba(X)
     auc = roc_auc_score(y, predictions)
     print("AUC: ", auc)
@@ -176,13 +170,16 @@ if __name__ == "__main__":
     parser.add_argument('-f', metavar= 'file', help='Additional k-mer set file (use preproc.py to merge k-mer sets into one file)')
     parser.add_argument('-e', metavar='e', type=int, help='Number of epochs')
     parser.add_argument('-b', metavar='b', type=int, help='Batch size')
+    parser.add_argument('-o', metavar= 'out', help='Model output directory')
+
 
     args = parser.parse_args()
     k = args.k
     UHSfile = args.f
     epochs = args.e
     batchSize = args.b
-    additionalPredict(k, UHSfile, epochs, batchSize)
+    outputPath = args.o
+    additionalPredict(k, UHSfile, epochs, batchSize, outputPath)
     
     
     
