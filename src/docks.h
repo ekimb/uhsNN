@@ -358,7 +358,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         Stream file("");
-        auto model = Model::make(file);
+        model = Model::load("");
         while (calculatePaths(l, threads)) {
             int imaxHittingNum = calculateHittingNumberParallel(l, threads);
             if (imaxHittingNum < 0) break;
