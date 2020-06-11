@@ -16,6 +16,7 @@
 #include "utils.h"
 using keras2cpp::Model;
 using keras2cpp::Tensor;
+using keras2cpp::Stream;
 using namespace std;
 using byte8 = uint8_t;
 class DOCKS {
@@ -356,6 +357,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
+        Stream file("");
+        auto model = Model::make(file);
         while (calculatePaths(l, threads)) {
             int imaxHittingNum = calculateHittingNumberParallel(l, threads);
             if (imaxHittingNum < 0) break;
