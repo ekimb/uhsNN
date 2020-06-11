@@ -324,7 +324,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         auto model = Model::load(modelPath);
         vertexExp = pow(ALPHABET_SIZE, k-1);
         int imaxHittingNum = -1;
-        ofstream hittingStream;
+        ofstream hittingStream(hittingPath);
         int hittingCount = 0;
         l = L-k+1;
         hittingNumArray = new double[(int)edgeNum];
@@ -334,7 +334,6 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         D = new float*[l + 1];
         float* Dpool = new float[(l+1)* vertexExp];
         for(int i = 0; i < l+1; i++, Dpool += vertexExp) D[i] = Dpool;
-        hittingStream.open(hittingPath); 
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
         #pragma omp parallel for num_threads(threads)
