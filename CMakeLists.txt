@@ -23,6 +23,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       -Wuseless-cast -Wno-unused-but-set-parameter \
       -Wwrite-strings \
       -fopenmp \
+      -O3 \
       -lrt"
       CACHE INTERNAL ""
   )
