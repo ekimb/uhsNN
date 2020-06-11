@@ -5,7 +5,7 @@ namespace keras2cpp {
     : stream_(filename, std::ios::binary) {
         stream_.exceptions();
         if (!stream_.is_open())
-            throw std::runtime_error("Cannot open " + filename);
+            //throw std::runtime_error("Cannot open " + filename);
     }
 
     Stream& Stream::reads(char* ptr, size_t count) {
