@@ -311,7 +311,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         t.data_[4*k] = (l+k-1);
         Tensor out = model(t);
-        vector<float>().swap(t.data_);
+        t.data_.clear();
+        t.data_.shrink_to_fit();
         return out;
     }
     int HittingML(int L, const char *hittingPath, string modelPath, double threshold, int threads) {
@@ -345,7 +346,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                 for (auto&& it : tout.data_) {
                     res = static_cast<double>(it);
                 }
-                vector<float>().swap(tout.data_);
+                tout.data_.clear();
+                tout.data_.shrink_to_fit();
                 if (res >= threshold) {
                     removeEdge(i);
                     string label = getLabel(i);
@@ -357,8 +359,6 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
-        Stream file("");
-        model = Model::load("");
         while (calculatePaths(l, threads)) {
             int imaxHittingNum = calculateHittingNumberParallel(l, threads);
             if (imaxHittingNum < 0) break;
