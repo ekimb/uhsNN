@@ -372,7 +372,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                 hittingCount++;
             }
         }
-        std::cout << "Predicted k-mer set size: " << size << std::endl;
+        std::cout << "Predicted k-mer set size: " << predCount << std::endl;
 
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
