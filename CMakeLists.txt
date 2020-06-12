@@ -35,7 +35,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
       -Wno-class-varargs -Wno-padded \
       -Wc++17-compat \
       -Wno-c++98-compat -Wno-c++98-compat-pedantic \
-      --Xpreprocessor -fopenmp"
+      --Xpreprocessor -fopenmp -O3"
       # -Wno-c++14-extensions
       # -Wno-c++17-extensions
       # -Wno-switch-enum -Wno-unused-macros
