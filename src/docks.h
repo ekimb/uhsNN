@@ -359,11 +359,12 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
         int size = v.size();
+        std::cout << "Predicted k-mer set size: " << size << std::endl;
         #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < size; i++) {
             //std::cout << it.kmer << it.index << it.pred << std::endl;
             if (v[i].pred >= threshold) {
-                std::cout << "Found model prediction above threshold" << std::endl;
+                //std::cout << "Found model prediction above threshold" << std::endl;
                 removeEdge(v[i].index);
                 string label = v[i].kmer;
                 hittingStream << label << "\n";
