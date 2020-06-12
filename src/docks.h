@@ -376,16 +376,19 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
 
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
+        int restCount = 0;
         while (calculatePaths(l, threads)) {
             int imaxHittingNum = calculateHittingNumberParallel(l, threads);
             if (imaxHittingNum < 0) break;
             removeEdge(imaxHittingNum);
             string label = getLabel(imaxHittingNum);
             hittingStream << label << "\n";
+            restCount++;
             hittingCount++;
         }
         hittingStream.close();
         topologicalSort();
+        cout << "DOCKS set size: " << restCount << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hittingCount;
     }
