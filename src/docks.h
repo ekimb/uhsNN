@@ -360,7 +360,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fprev = new float[vertexExp];
         int size = v.size();
         int predCount = 0;
-        #pragma omp parallel for num_threads(threads)
+       // #pragma omp parallel for num_threads(threads)
         for (int i = 0; i < size; i++) {
             //std::cout << it.kmer << it.index << it.pred << std::endl;
             if (v[i].pred >= threshold) {
