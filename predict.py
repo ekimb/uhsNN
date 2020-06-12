@@ -37,12 +37,12 @@ if __name__ == "__main__":
     k = args.k
     L = args.L
     UHSfile = args.u
-    jsonFile = open('model.json', 'r')
+    jsonFile = open('model8.json', 'r')
     loadedModelJson = jsonFile.read()
     jsonFile.close()
     loadedModel = model_from_json(loadedModelJson)
     # load weights into new model
-    loadedModel.load_weights("model.h5")
+    loadedModel.load_weights("model8.h5")
     print("Loaded model from disk")
     kmerArray = enumerateKmers(k)
     decycArray = constructDecycArray(UHSfile)
