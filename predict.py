@@ -4,23 +4,24 @@ from keras.layers import Dense
 from keras.models import model_from_json
 import numpy as np
 import os
+import itertools
 import sys
 from train import enumerateKmers, oneHotEncode, constructUHSarray
 from timeit import default_timer as timer
+from multiprocessing import Pool
 
 def constructDecycArray(path):
     f = open(path, "r")
     decycArray = []
     for line in f:
-        if line[0] == '>' and line.strip('\n').strip('>') == 'decycling':
+        if line[0] == '>decycling':
             decycKmerSwitch = 1
             addKmerSwitch = 0
         elif line[0] == '>':
             break
         else:
-            if decycKmerSwitch == 1 and addKmerSwitch == 0:
-                kmer = line.rstrip()
-                decycArray.append(kmer)
+            kmer = line.rstrip()
+            decycArray.append(kmer)
     return decycArray
 
 if __name__ == "__main__":
@@ -44,12 +45,11 @@ if __name__ == "__main__":
     # load weights into new model
     loadedModel.load_weights("model8.h5")
     print("Loaded model from disk")
-    kmerArray = enumerateKmers(k)
+    bases = ['A', 'C', 'G', 'T']
+    kmerArray = [''.join(p) for p in itertools.product(bases, repeat=k)]
     decycArray = constructDecycArray(UHSfile)
     predictInput = []
-    for kmer in kmerArray:
-        if kmer in decycArray:
-            kmerArray.remove(kmer)
+    kmerArray = [x for x in kmerArray if x not in decycArray]
     print('Preparing k-mers for k = %d and L = %s' % (k, L))
     for kmer in kmerArray:
         oneHot = oneHotEncode(kmer).flatten()
