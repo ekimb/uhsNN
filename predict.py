@@ -38,7 +38,7 @@ if __name__ == "__main__":
     m = args.m
     maxmaxk = 15
     intdict = buildDict(k)
-    model = load_model(args.m)
+    model = load_model(args.m, compile=False)
     print("Loaded model from disk")
     print(L)
     lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
