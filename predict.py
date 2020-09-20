@@ -25,7 +25,7 @@ def buildDict(k):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Makes predictions for provided k-mer length (k) and sequence length (L) with trained model (.h5) as input.')
     parser.add_argument('-k', metavar='k', type=int, help='K-mer size (k) for the UHS')
-    parser.add_argument('-L', metavar= 'L', help='Sequence size (L) for the UHS')
+    parser.add_argument('-L', metavar= 'L', type=int, help='Sequence size (L) for the UHS')
     parser.add_argument('-m', metavar='m', help='Complete model (.h5) file')
     parser.add_argument('-t', metavar='t', help='Model threshold')
     parser.add_argument('-n', metavar= 'n', help='Number of threads')
