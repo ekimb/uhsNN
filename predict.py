@@ -48,7 +48,9 @@ if __name__ == "__main__":
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
     labels=np.zeros(np.power(4,k), dtype=np.int8)
-    total_lst=np.append(total_lst, lstkL[:,0:2*maxmaxk+2],axis=0)
+    print(labels.shape)
+    combined = np.append(lstkL, labels.reshape(labels.shape[0],1), axis=1)
+    total_lst=np.append(total_lst, combined[:,0:2*maxmaxk+2],axis=0)
     prediction = model.predict(total_lst)
     outF = open("preds.txt", "w")
     for i in range(len(prediction)):
