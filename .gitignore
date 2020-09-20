@@ -7,6 +7,8 @@ __pycache__/
 *.json
 *.h5
 *.cmake
+*.int
+uhs/
 
 CMakeFiles/
 #data
