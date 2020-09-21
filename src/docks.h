@@ -440,11 +440,13 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             //std::cout << it.kmer << it.index << it.pred << std::endl;
             if (v[i].pred >= threshold) {
                 //std::cout << "Found model prediction above threshold" << std::endl;
-                predCount++;
-                removeEdge(v[i].index);
-                string label = v[i].kmer;
-                hittingStream << label << "\n";
-                hittingCount++;
+                if (edgeArray[v[i].index] == 1) {
+                    predCount++;
+                    removeEdge(v[i].index);
+                    string label = v[i].kmer;
+                    hittingStream << label << "\n";
+                    hittingCount++;
+                }
             }
         }
         std::cout << "Predicted k-mer set size: " << predCount << std::endl;
