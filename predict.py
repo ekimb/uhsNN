@@ -32,7 +32,6 @@ if __name__ == "__main__":
     parser.add_argument('-n', metavar= 'n', help='Number of threads')
 
 
-    start = timer()
     args = parser.parse_args()
     k = args.k
     L = args.L
@@ -43,6 +42,7 @@ if __name__ == "__main__":
     model = load_model(args.m, compile=False)
     print("Loaded model from disk")
     print(L)
+    start = timer()
     lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
     padlst = np.pad(lst, ((0, 0),(0,maxmaxk*2-lst.shape[1])), 'constant', constant_values=((2, 2),(2,2)))
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
