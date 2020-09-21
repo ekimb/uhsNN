@@ -32,6 +32,8 @@ class DOCKS {
         double* hittingNumArray;
         float** D;
         float* Fcurr;
+        float delta;
+        float epsilon;
         float* Fprev;
         int ALPHABET_SIZE;
         double edgeCount;
@@ -39,7 +41,9 @@ class DOCKS {
         int k;
         int curr;
         int l;
+        int h;
         int total;
+        int exit;
         int vertexCount; 
         int vertexExp;
         int vertexExp2;
@@ -47,9 +51,12 @@ class DOCKS {
         int vertexExpMask;
         int vertexExp_1;
         byte8* edgeArray;
+        byte8* stageArray;
+        byte8* pick;
         int* topoSort;
         static map<char, int> alphabetMap;
         string ALPHABET;
+        vector<int> stageVertices;
     DOCKS (int argK) {
     /**
     Definition of a graph object. Generates a graph of order k, creates an empty
@@ -221,7 +228,7 @@ class DOCKS {
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
         while (calculatePaths(l, threads)) {
-            int imaxHittingNum = calculateHittingNumberParallel(l, threads);
+            int imaxHittingNum = calculateHittingNumberParallelDOCKS(l, threads);
             if (imaxHittingNum < 0) break;
             removeEdge(imaxHittingNum);
             string label = getLabel(imaxHittingNum);
@@ -234,7 +241,7 @@ class DOCKS {
         return hittingCount;
     }
 
-   int calculateHittingNumberParallel(int L, int threads) {
+   int calculateHittingNumberParallelDOCKS(int L, int threads) {
 /**
 Calculates hitting number of all edges, counting paths of length L-k+1, in parallel.
 @param L: Sequence length.
@@ -378,7 +385,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         int restCount = 0;
         while (calculatePaths(l, threads)) {
-            int imaxHittingNum = calculateHittingNumberParallel(l, threads);
+            int imaxHittingNum = calculateHittingNumberParallelDOCKS(l, threads);
             if (imaxHittingNum < 0) break;
             removeEdge(imaxHittingNum);
             string label = getLabel(imaxHittingNum);
@@ -391,6 +398,182 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         cout << "DOCKS set size: " << restCount << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hittingCount;
+    }
+    int HittingRandomParallel(int L, const char *hittingPath, double threshold, int threads, vector<record> &v) {
+    /**
+    Performs hitting set calculations with parallelization
+    and with randomization, counting L-k+1-long paths.
+    @param L: Sequence length, hittingFile: Output file destination.
+    @return hittingCount: Size of hitting set.
+    */
+        vertexExp = pow(ALPHABET_SIZE, k-1);
+        ofstream hittingStream(hittingPath);
+        int hittingCount = 0;
+        l = L-k+1;
+        delta = 1/(double)l;
+        epsilon = (1-8*(delta))/4;
+        //delta = 0.08333333;
+        //epsilon = 0.08333333;
+        double alpha = 1 - 4*delta -2*epsilon;
+        cout << "Alpha: " << 1/alpha << endl;
+        cout << "Delta: " << delta << endl;
+        cout << "Epsilon: " << epsilon << endl;
+        int i;
+        int j;
+        hittingNumArray = new double[(int)edgeNum];
+        stageArray = new byte8[(int)edgeNum];
+        used = new byte8[vertexExp];
+        finished = new byte8[vertexExp];
+        pick = new byte8[(int)edgeNum];
+        topoSort = new int[vertexExp];
+        D = new float*[l + 1];
+        //Dexp = new byte*[l + 1];
+       //float* Dpool = new float[(l+1)* vertexExp];
+        for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
+        //hittingStream.open(hittingFile); 
+        Fcurr = new float[vertexExp];
+        Fprev = new float[vertexExp];
+        int size = v.size();
+        int predCount = 0;
+       // #pragma omp parallel for num_threads(threads)
+        for (int i = 0; i < size; i++) {
+            //std::cout << it.kmer << it.index << it.pred << std::endl;
+            if (v[i].pred >= threshold) {
+                //std::cout << "Found model prediction above threshold" << std::endl;
+                predCount++;
+                removeEdge(v[i].index);
+                string label = v[i].kmer;
+                hittingStream << label << "\n";
+                hittingCount++;
+            }
+        }
+        std::cout << "Predicted k-mer set size: " << predCount << std::endl;
+        topologicalSort();
+        cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
+        //double* Fpool = new double[(l+1)* vertexExp];
+       // for(int i = 0; i < l+1; i++, Fpool += vertexExp) F[i] = Fpool;
+        calculatePaths(l, threads);
+        int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
+        cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
+        h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
+        double prob = delta/(double)l;
+        while (h > 0) {
+            //cout << h << endl;
+            total = 0;
+            int hittingCountStage = 0;
+            double pathCountStage = 0;
+            calculatePaths(l, threads);
+            imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
+            if (exit == -1) break;
+            stageVertices = pushBackVector();
+            #pragma omp parallel for num_threads(threads)
+            for (int it = 0; it < stageVertices.size(); it++) {
+                i = stageVertices[it];
+                #pragma omp critical
+                if ((pick[i] == false) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
+                    stageArray[i] = 0;
+                    pick[i] = true;
+                    hittingCountStage++;
+                    pathCountStage += hittingNumArray[i];
+                }
+            }
+            #pragma omp parallel for collapse (2) num_threads(threads) 
+            for (int it = 0; it < stageVertices.size(); it++) {
+                for (int jt = 0; jt < stageVertices.size(); jt++) {
+                    i = stageVertices[it];
+                    #pragma omp critical
+                    if (pick[i] == false) {
+                        if (((double) rand() / (RAND_MAX)) <= prob) {
+                            stageArray[i] = 0;
+                            pick[i] = true;
+                            hittingCountStage += 1;
+                            pathCountStage += hittingNumArray[i];
+                        }
+                        j = stageVertices[jt];
+                        if (pick[j] == false) {
+                            if (((double) rand() / (RAND_MAX)) <= prob) {
+                                stageArray[j] = 0;
+                                pick[j] = true;
+                                hittingCountStage += 1;
+                                pathCountStage += hittingNumArray[j];
+
+                            }
+                            else pick[i] = false;
+                        }
+                    }
+                }
+            }
+            hittingCount += hittingCountStage;
+            #pragma omp barrier
+            if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
+                for (int it = 0; it < stageVertices.size(); it++) {
+                    i = stageVertices[it];
+                    if (pick[i] == true) {
+                        removeEdge(i);
+                        string label = getLabel(i);
+                        hittingStream << label << "\n";
+                        //cout << label << endl;
+                    }
+                }
+                h--;
+            }
+            else hittingCount -= hittingCountStage;
+        }
+        hittingStream.close();
+        topologicalSort();
+        cout << "DOCKS set size: " << hittingCount - predCount << endl;
+        cout << "Length of longest remaining path: " <<  maxLength() << "\n";
+        return hittingCount;
+    }
+    int findLog(double base, double x) {
+    /**
+    Finds the logarithm of a given number with respect to a given base.
+    @param base: Base of logartihm, x: Input number.
+    @return (int)(log(x) / log(base)): Integer logarithm of the number and the given base.
+    */
+        return (int)(log(x) / log(base));
+    }
+    vector<int> pushBackVector() {
+        vector<int> stageVertices;
+        for(int i = 0; i < (int)edgeNum; i++) {
+            if (stageArray[i] == 1) stageVertices.push_back(i);
+        }
+        return stageVertices;
+    }
+    int calculateHittingNumberParallel(int L, bool random, int threads) {
+/**
+Calculates hitting number of all edges, counting paths of length L-k+1, in parallel.
+@param L: Sequence length.
+@return imaxHittingNum: Index of vertex with maximum hitting number.
+*/  
+        omp_set_dynamic(0);
+        double maxHittingNum = 0;
+        int imaxHittingNum = 0;
+        int count = 0;
+        exit = -1;
+        #pragma omp parallel for num_threads(threads)
+        for (int i = 0; i < (int)edgeNum; i++) {
+          //  calculateForEach(i, L);
+            if (random == true) {
+                if (((hittingNumArray[i]) >= pow((1.0+epsilon), h-1)) && ((hittingNumArray[i]) <= pow((1.0+epsilon), h))) {
+                    stageArray[i] = 1;
+                    pick[i] = false;
+                    total += hittingNumArray[i] * stageArray[i];
+                    count++;
+                }
+                else {
+                    stageArray[i] = 0;
+                    pick[i] = false;
+                }   
+            }
+        }
+        for (int i = 0; i < (int)edgeNum; i++) {
+            if ((hittingNumArray[i])*edgeArray[i] > maxHittingNum) {
+                maxHittingNum = hittingNumArray[i]; imaxHittingNum = i;
+                exit = 0;
+            }
+        }
+        return imaxHittingNum;
     }
 };
 #endif
