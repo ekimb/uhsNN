@@ -3,6 +3,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import load_model
 import numpy as np
+import pandas as pd
 import os
 import itertools
 import sys
@@ -36,6 +37,7 @@ if __name__ == "__main__":
     k = args.k
     L = args.L
     m = args.m
+    decycling=pd.read_csv("decyc"+str(k)+".int")
     maxmaxk = 15
     intdict = buildDict(k)
     model = load_model(args.m, compile=False)
