@@ -47,7 +47,7 @@ if __name__ == "__main__":
     padlst = np.pad(lst, ((0, 0),(0,maxmaxk*2-lst.shape[1])), 'constant', constant_values=((2, 2),(2,2)))
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
-    labels=model.predict(lstkL)
+    labels=model.predict(lstkL, batch_size=128, workers=args.n, use_multiprocessing=True)
     labels[decycling]=2
     print(labels.shape)
     outF = open("preds.txt", "w")

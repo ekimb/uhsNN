@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=10
+maxk=11
 basedict={"A": 0, "C": 1, "G": 2, "T": 3}
 for k in range (mink,maxk+1,1):
   print(k)
