@@ -21,10 +21,10 @@ for k in range (mink,maxk+1,1):
 		lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
 		labels=np.zeros(np.power(4,k), dtype=np.int8)
 		labels[decycling]=2
-		print("DOCKS"+str(k)+"_"+str(L)+".int")
-		print(os.path.isfile("DOCKS"+str(k)+"_"+str(L)+".int"))
-		if (os.path.isfile("DOCKS"+str(k)+"_"+str(L)+".int")):
-			docks=np.array(pd.read_csv("DOCKS"+str(k)+"_"+str(L)+".int", header=None))
+		print("PASHA"+str(k)+"_"+str(L)+".int")
+		print(os.path.isfile("PASHA"+str(k)+"_"+str(L)+".int"))
+		if (os.path.isfile("PASHA"+str(k)+"_"+str(L)+".int")):
+			docks=np.array(pd.read_csv("PASHA"+str(k)+"_"+str(L)+".int", header=None))
 			labels[docks]=1
 		combined = np.append(lstkL, labels.reshape(labels.shape[0],1), axis=1)
 		combined = combined[np.logical_not(combined[:,2*maxmaxk+2]==2)]
@@ -46,4 +46,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=10, batch_size=1024)
 
-model.save("model_uhs_L_k.h5")
+model.save("PASHAmodel_uhs_L_k.h5")

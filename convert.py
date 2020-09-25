@@ -20,9 +20,9 @@ for k in range (mink,maxk+1,1):
   g.close()
   for L in range(20,210,10):
     print(L)
-    if (os.path.isfile("uhs/k" + str(k) + "/DOCKS" +str(k)+ "_" + str(L) + ".txt")):
-      f = open("uhs/k" + str(k) + "/DOCKS" +str(k)+ "_" + str(L) + ".txt", "r")
-      g = open("DOCKS" +str(k)+ "_" + str(L) +".int", "w")
+    if (os.path.isfile("uhs/k" + str(k) + "/PASHA" +str(k)+ "_" + str(L) + ".txt")):
+      f = open("uhs/k" + str(k) + "/PASHA" +str(k)+ "_" + str(L) + ".txt", "r")
+      g = open("PASHA" +str(k)+ "_" + str(L) +".int", "w")
       for line in f:
         kmer = line.strip("\n")
         totval = 0
