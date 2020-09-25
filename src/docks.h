@@ -406,6 +406,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
     @param L: Sequence length, hittingFile: Output file destination.
     @return hittingCount: Size of hitting set.
     */
+        srand (1);
         vertexExp = pow(ALPHABET_SIZE, k-1);
         ofstream hittingStream(hittingPath);
         int hittingCount = 0;
