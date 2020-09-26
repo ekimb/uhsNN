@@ -7,7 +7,7 @@ maxk=9
 basedict={"A": 0, "C": 1, "G": 2, "T": 3}
 for k in range (mink,maxk+1,1):
   print(k)
-  f = open("uhs" + str(k) + "/decyc" +str(k)+".txt", "r")
+  f = open("uhs/decyc" +str(k)+".txt", "r")
   g = open("decyc" + str(k) +".int", "w")
   for line in f:
     kmer = line.strip("\n")
@@ -20,8 +20,8 @@ for k in range (mink,maxk+1,1):
   g.close()
   for L in range(20,201,1):
     print(L)
-    if (os.path.isfile("uhs" + str(k) + "/PDOCKS" +str(k) + str(L) + ".txt")):
-      f = open("uhs" + str(k) + "/PDOCKS" +str(k) + str(L) + ".txt", "r")
+    if (os.path.isfile("uhs/PDOCKS" +str(k) + str(L) + ".txt")):
+      f = open("uhs/PDOCKS" +str(k) + str(L) + ".txt", "r")
       g = open("PDOCKS" +str(k) + str(L) +".int", "w")
       for line in f:
         kmer = line.strip("\n")
