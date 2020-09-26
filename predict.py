@@ -36,7 +36,7 @@ if __name__ == "__main__":
     k = args.k
     L = args.L
     m = args.m
-    decycling=pd.read_csv("decyc"+str(k)+".int")
+    decycling=pd.read_csv("int/decyc"+str(k)+".int")
     maxmaxk = 15
     intdict = buildDict(k)
     model = load_model(args.m, compile=False)
