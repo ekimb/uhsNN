@@ -13,7 +13,7 @@ for k in range (mink,maxk+1,1):
 	print(k)
 	decycling=pd.read_csv("decyc"+str(k)+".int")
 	lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
-	for L in range(20,210,10):
+	for L in range(20,201,1):
 		print(L)
 		lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
 		padlst = np.pad(lst, ((0, 0),(0,maxmaxk*2-lst.shape[1])), 'constant', constant_values=((2, 2),(2,2)))
@@ -21,10 +21,10 @@ for k in range (mink,maxk+1,1):
 		lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
 		labels=np.zeros(np.power(4,k), dtype=np.int8)
 		labels[decycling]=2
-		print("PASHA"+str(k)+"_"+str(L)+".int")
-		print(os.path.isfile("PASHA"+str(k)+"_"+str(L)+".int"))
-		if (os.path.isfile("PASHA"+str(k)+"_"+str(L)+".int")):
-			docks=np.array(pd.read_csv("PASHA"+str(k)+"_"+str(L)+".int", header=None))
+		print("PDOCKS"+str(k)+str(L)+".int")
+		print(os.path.isfile("PDOCKS"+str(k)+str(L)+".int"))
+		if (os.path.isfile("PDOCKS"+str(k)+str(L)+".int")):
+			docks=np.array(pd.read_csv("PDOCKS"+str(k)+str(L)+".int", header=None))
 			labels[docks]=1
 		combined = np.append(lstkL, labels.reshape(labels.shape[0],1), axis=1)
 		combined = combined[np.logical_not(combined[:,2*maxmaxk+2]==2)]
