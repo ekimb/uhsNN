@@ -22,9 +22,9 @@ for k in range (mink,maxk+1,1):
 		labels=np.zeros(np.power(4,k), dtype=np.int8)
 		labels[decycling]=2
 		print("PDOCKS"+str(k)+str(L)+".int")
-		print(os.path.isfile("PDOCKS"+str(k)+str(L)+".int"))
-		if (os.path.isfile("PDOCKS"+str(k)+str(L)+".int")):
-			docks=np.array(pd.read_csv("PDOCKS"+str(k)+str(L)+".int", header=None))
+		print(os.path.isfile("int/PDOCKS"+str(k)+str(L)+".int"))
+		if (os.path.isfile("int/PDOCKS"+str(k)+str(L)+".int")):
+			docks=np.array(pd.read_csv("int/PDOCKS"+str(k)+str(L)+".int", header=None))
 			labels[docks]=1
 		combined = np.append(lstkL, labels.reshape(labels.shape[0],1), axis=1)
 		combined = combined[np.logical_not(combined[:,2*maxmaxk+2]==2)]
@@ -46,4 +46,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=10, batch_size=1024)
 
-model.save("PASHAmodel_uhs_L_k.h5")
+model.save("PDOCKSmodel_uhs_L_k.h5")
