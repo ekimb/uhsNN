@@ -11,7 +11,7 @@ total_lst=np.empty([0,2*maxmaxk+2],dtype=np.int8)
 
 for k in range (mink,maxk+1,1):
 	print(k)
-	decycling=pd.read_csv("decyc"+str(k)+".int")
+	decycling=pd.read_csv("int/decyc"+str(k)+".int")
 	lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
 	for L in range(20,201,1):
 		print(L)
