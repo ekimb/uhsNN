@@ -70,5 +70,5 @@ if __name__ == "__main__":
     print(output)
     end = timer()
     DOCKStime = end - start
-    print("DOCKS done, took " + str(DOCKStime) + " seconds.")
+    print("PDOCKS done, took " + str(DOCKStime) + " seconds.")
     print("Total is " + str(predTime+DOCKStime) + " seconds.")

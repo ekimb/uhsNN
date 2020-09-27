@@ -13,7 +13,7 @@ for k in range (mink,maxk+1,1):
 	print(k)
 	decycling=pd.read_csv("int/decyc"+str(k)+".int")
 	lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
-	for L in range(20,201, 1):
+	for L in range(20, 201, 1):
 		print(L)
 		lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
 		padlst = np.pad(lst, ((0, 0),(0,maxmaxk*2-lst.shape[1])), 'constant', constant_values=((2, 2),(2,2)))
