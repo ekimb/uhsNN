@@ -7,7 +7,6 @@ import pandas as pd
 import os
 import itertools
 import sys
-from train import enumerateKmers, oneHotEncode, constructUHSarray
 from timeit import default_timer as timer
 from multiprocessing import Pool
 def buildDict(k):
