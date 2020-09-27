@@ -392,12 +392,11 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             removeEdge(imaxHittingNum);
             string label = getLabel(imaxHittingNum);
             hittingStream << label << "\n";
-            restCount++;
             hittingCount++;
         }
         hittingStream.close();
         topologicalSort();
-        cout << "DOCKS set size: " << restCount << endl;
+        cout << "DOCKS set size: " << hittingCount - predCount << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hittingCount;
     }
