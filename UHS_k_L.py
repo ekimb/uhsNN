@@ -45,6 +45,6 @@ model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
-model.fit(total_lst, total_labels, epochs=10, batch_size=256)
+model.fit(total_lst, total_labels, epochs=10, batch_size=2048)
 
 model.save("PDOCKSmodel_uhs_L_k.h5")
