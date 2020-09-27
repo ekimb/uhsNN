@@ -3,8 +3,8 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=9
-maxmaxk=15
+maxk=7
+maxmaxk=10
 
 total_labels=np.empty(0,dtype=np.int8)
 total_lst=np.empty([0,2*maxmaxk+2],dtype=np.int8)
