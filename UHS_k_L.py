@@ -3,8 +3,8 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=7
-maxmaxk=10
+maxk=9
+maxmaxk=15
 
 total_labels=np.empty(0,dtype=np.int8)
 total_lst=np.empty([0,2*maxmaxk+2],dtype=np.int8)
@@ -34,15 +34,14 @@ for k in range (mink,maxk+1,1):
 print(total_labels.shape)
 print(total_lst.shape)
 from keras.models import Sequential
-from keras.layers import Dense,Masking,LSTM,GRU,Dropout
+from keras.layers import Dense,Masking,LSTM,GRU
 from keras import metrics
 
 model = Sequential()
 model.add(Masking(mask_value=2., input_shape=(maxmaxk*2+2, 1)))
-model.add(LSTM(128, input_dim=1))
+model.add(GRU(100, input_dim=1))
 #model.add(Dense(100, input_dim=2*k+1, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.5))
+model.add(Dense(50, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=10, batch_size=1024)
