@@ -1,3 +1,5 @@
+K=$1
+L=$2
 for T in {0.1..0.9}
 do
 python predict.py -k $K -L $L -m PDOCKSmodel_uhs_L_k.h5 -t $T -n 48
