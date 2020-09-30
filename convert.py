@@ -18,7 +18,7 @@ for k in range (mink,maxk+1,1):
     g.write(str(totval) + "\n")
   f.close()
   g.close()
-  for L in range(20,201,1):
+  for L in range(20,201,10):
     print(L)
     if (os.path.isfile("uhs/DOCKS" +str(k) + "_" + str(L) + ".txt")):
       f = open("uhs/DOCKS" +str(k) + "_" + str(L) + ".txt", "r")
