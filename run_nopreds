@@ -1,0 +1,7 @@
+for K in 10 11
+do
+for L in 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200
+do
+build/predict nopreds.txt $K $L decyc$K.txt $K_$L_nopred.txt 0.0 48
+done
+done
