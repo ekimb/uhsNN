@@ -10,7 +10,7 @@ __pycache__/
 *.int
 int/
 uhs/
-.txt
+*.txt
 
 CMakeFiles/
 #data
