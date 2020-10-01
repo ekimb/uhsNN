@@ -1,0 +1,2 @@
+Password for ekim@CSAIL.MIT.EDU: 
+Output redirected to /tmp/ekim.job.57301
