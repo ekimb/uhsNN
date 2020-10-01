@@ -525,7 +525,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         hittingStream.close();
         topologicalSort();
-        cout << "DOCKS set size: " << hittingCount - predCount << endl;
+        cout << "PASHA set size: " << hittingCount - predCount << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hittingCount;
     }
