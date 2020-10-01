@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=10
+maxk=9
 maxmaxk=15
 
 total_labels=np.empty(0,dtype=np.int8)
@@ -46,4 +46,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=10, batch_size=1024)
 
-model.save("PDOCKSmodel_uhs_L_k.h5")
+model.save("model_10_iter_10.h5")
