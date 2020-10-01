@@ -1,4 +1,5 @@
 L=$1
+build/predict nopreds.txt 11 $L decyc11.txt 11_$L_nopred.txt 0.0 24
 for T in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
 do
 python predict.py -k 11 -L $L -m model_11.h5 -t $T -n 48
