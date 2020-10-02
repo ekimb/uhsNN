@@ -41,12 +41,13 @@ if __name__ == "__main__":
     model = load_model(args.m, compile=False)
     print("Loaded model from disk")
     print(L)
-    start = timer()
     lst = np.array(list(itertools.product([0, 1], repeat=2*k)))
     padlst = np.pad(lst, ((0, 0),(0,maxmaxk*2-lst.shape[1])), 'constant', constant_values=((2, 2),(2,2)))
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
+    start = timer()
     labels=model.predict(lstkL, batch_size=8192, workers=args.n, use_multiprocessing=True)
+    end = timer()
     labels[decycling]=2
     print(labels.shape)
     outF = open("preds.txt", "w")
@@ -54,7 +55,6 @@ if __name__ == "__main__":
         outF.write(intdict[i] + '\t' + str(labels[i][0]))
         outF.write("\n")
     outF.close()
-    end = timer()
     predTime = end - start
     print("Predictions done, took " + str(predTime) + " seconds.")
     print("Starting DOCKS...")
