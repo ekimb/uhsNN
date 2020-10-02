@@ -408,7 +408,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
     @param L: Sequence length, hittingFile: Output file destination.
     @return hittingCount: Size of hitting set.
     */
-        srand (1);
+        omp_set_dynamic(0);
         vertexExp = pow(ALPHABET_SIZE, k-1);
         ofstream hittingStream(hittingPath);
         int hittingCount = 0;
@@ -458,10 +458,12 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         //double* Fpool = new double[(l+1)* vertexExp];
        // for(int i = 0; i < l+1; i++, Fpool += vertexExp) F[i] = Fpool;
         calculatePaths(l, threads);
+        srand (1);
         int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
         cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
         h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
         double prob = delta/(double)l;
+        int hits = 0;
         while (h > 0) {
             //cout << h << endl;
             total = 0;
@@ -471,7 +473,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
             if (exit == -1) break;
             stageVertices = pushBackVector();
-            #pragma omp parallel for num_threads(threads)
+            #pragma omp parallel num_threads(threads)
             for (int it = 0; it < stageVertices.size(); it++) {
                 i = stageVertices[it];
                 #pragma omp critical
@@ -482,7 +484,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                     pathCountStage += hittingNumArray[i];
                 }
             }
-            #pragma omp parallel for collapse (2) num_threads(threads) 
+            #pragma omp parallel num_threads(threads) 
             for (int it = 0; it < stageVertices.size(); it++) {
                 for (int jt = 0; jt < stageVertices.size(); jt++) {
                     i = stageVertices[it];
@@ -508,8 +510,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                     }
                 }
             }
-            hittingCount += hittingCountStage;
             #pragma omp barrier
+            hittingCount += hittingCountStage;
             if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
                 for (int it = 0; it < stageVertices.size(); it++) {
                     i = stageVertices[it];
@@ -517,7 +519,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                         removeEdge(i);
                         string label = getLabel(i);
                         hittingStream << label << "\n";
-                        //cout << label << endl;
+                        hits++;
                     }
                 }
                 h--;
@@ -526,9 +528,9 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         hittingStream.close();
         topologicalSort();
-        cout << "PASHA set size: " << hittingCount - predCount << endl;
+        cout << "PASHA set size: " << hits - predCount << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
-        return hittingCount;
+        return hits;
     }
     int findLog(double base, double x) {
     /**
@@ -556,7 +558,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         int imaxHittingNum = 0;
         int count = 0;
         exit = -1;
-        #pragma omp parallel for num_threads(threads)
+        #pragma omp parallel num_threads(threads)
         for (int i = 0; i < (int)edgeNum; i++) {
           //  calculateForEach(i, L);
             if (random == true) {
