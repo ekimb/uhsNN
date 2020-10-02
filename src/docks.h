@@ -14,6 +14,7 @@
 #include "model.h"
 #include "tensor.h"
 #include "utils.h"
+#include <stdlib.h>
 using keras2cpp::Model;
 using keras2cpp::Tensor;
 using keras2cpp::Stream;
