@@ -531,7 +531,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         topologicalSort();
         cout << "PASHA set size: " << hits << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
-        return hits;
+        return hits + predCount;
     }
     int findLog(double base, double x) {
     /**
