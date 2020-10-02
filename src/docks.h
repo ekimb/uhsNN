@@ -485,6 +485,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                 }
             }
             #pragma omp parallel num_threads(threads) 
+            #pragma omp for
             for (int it = 0; it < stageVertices.size(); it++) {
                 for (int jt = 0; jt < stageVertices.size(); jt++) {
                     i = stageVertices[it];
@@ -559,6 +560,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         int count = 0;
         exit = -1;
         #pragma omp parallel num_threads(threads)
+        #pragma omp for
         for (int i = 0; i < (int)edgeNum; i++) {
           //  calculateForEach(i, L);
             if (random == true) {
