@@ -438,12 +438,6 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fprev = new float[vertexExp];
         int size = v.size();
         int predCount = 0;
-        #pragma omp parallel num_threads(threads)
-        for (int i = 0; i < size; i++) {
-            if (edgeArray[v[i].index] == 1) {
-                removeEdge(v[i].index);
-            }
-        }
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         //double* Fpool = new double[(l+1)* vertexExp];

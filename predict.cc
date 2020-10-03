@@ -51,10 +51,11 @@ int main(int argc, char* argv[]) {
         r.index = docks.getIndex(r.kmer);
         std::getline( is, s, '\t' );
         r.pred = std::stof(s);
-        if (r.pred >= threshold) {
+        if (r.pred >= threshold && docks.edgeArray[r.index] == 1) {
             preds++;
             hittingStream << r.kmer << "\n";
             v.push_back(r);
+            docks.removeEdge(r.index);
         }
     }
     clock_gettime(CLOCK_MONOTONIC, &start);
