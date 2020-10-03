@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=11
+maxk=10
 basedict={"A": 0, "C": 1, "G": 2, "T": 3}
 for k in range (mink,maxk+1,1):
   print(k)
@@ -20,9 +20,9 @@ for k in range (mink,maxk+1,1):
   g.close()
   for L in range(20,201,10):
     print(L)
-    if (os.path.isfile("uhs/PDOCKS" +str(k) + str(L) + ".txt")):
-      f = open("uhs/PDOCKS" +str(k) +  str(L) + ".txt", "r")
-      g = open("int/PDOCKS" +str(k) + str(L) +".int", "w")
+    if (os.path.isfile("uhs/PASHA" +str(k) + str(L) + ".txt")):
+      f = open("uhs/PASHA" +str(k) +  str(L) + ".txt", "r")
+      g = open("int/PASHA" +str(k) + str(L) +".int", "w")
       for line in f:
         kmer = line.strip("\n")
         totval = 0
