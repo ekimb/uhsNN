@@ -38,7 +38,6 @@ int main(int argc, char* argv[]) {
     int decyclingSize = decyclingSet.size();
     cout << "Decycling set size: " << decyclingSize << endl;
     decyclingStream.close();
-    clock_gettime(CLOCK_MONOTONIC, &start);
     string line;
     std::ifstream file("../preds.txt");
     std::vector<record> v;
@@ -52,6 +51,7 @@ int main(int argc, char* argv[]) {
         r.pred = std::stof(s);
         v.push_back(r);
     }
+    clock_gettime(CLOCK_MONOTONIC, &start);
     int hittingSize = docks.HittingRandomParallel(L, hittingPath, threshold, threads, v);
     clock_gettime(CLOCK_MONOTONIC, &finish);
     elapsed = (finish.tv_sec - start.tv_sec);
