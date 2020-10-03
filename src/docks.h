@@ -401,7 +401,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hittingCount;
     }
-    int HittingRandomParallel(int L, const char *hittingPath, double threshold, int threads, vector<record> &v) {
+    int HittingRandomParallel(int L, const char *hittingPath, float threshold, int threads, vector<record> &v) {
     /**
     Performs hitting set calculations with parallelization
     and with randomization, counting L-k+1-long paths.
@@ -438,17 +438,17 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         Fprev = new float[vertexExp];
         int size = v.size();
         int predCount = 0;
-       // #pragma omp parallel for num_threads(threads)
+        #pragma omp parallel num_threads(threads)
         for (int i = 0; i < size; i++) {
             //std::cout << it.kmer << it.index << it.pred << std::endl;
             if (v[i].pred >= threshold) {
                 //std::cout << "Found model prediction above threshold" << std::endl;
                 if (edgeArray[v[i].index] == 1) {
-                    predCount++;
                     removeEdge(v[i].index);
-                    string label = v[i].kmer;
-                    hittingStream << label << "\n";
+                    #pragma omp critical
+                    hittingStream << v[i].kmer << "\n";
                     hittingCount++;
+                    predCount++;
                 }
             }
         }
