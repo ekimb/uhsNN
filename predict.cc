@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     cout << "Decycling set size: " << decyclingSize << endl;
     decyclingStream.close();
     string line;
-    int preds;
+    int preds = 0;
     std::ifstream file("../preds.txt");
     std::vector<record> v;
     while (std::getline(file, line)) {

@@ -436,8 +436,6 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         //hittingStream.open(hittingFile); 
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
-        int size = v.size();
-        int predCount = 0;
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         //double* Fpool = new double[(l+1)* vertexExp];
