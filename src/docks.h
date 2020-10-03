@@ -440,19 +440,10 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         int predCount = 0;
         #pragma omp parallel num_threads(threads)
         for (int i = 0; i < size; i++) {
-            //std::cout << it.kmer << it.index << it.pred << std::endl;
-            if (v[i].pred >= threshold) {
-                //std::cout << "Found model prediction above threshold" << std::endl;
-                if (edgeArray[v[i].index] == 1) {
-                    removeEdge(v[i].index);
-                    #pragma omp critical
-                    hittingStream << v[i].kmer << "\n";
-                    hittingCount++;
-                    predCount++;
-                }
+            if (edgeArray[v[i].index] == 1) {
+                removeEdge(v[i].index);
             }
         }
-        std::cout << "Predicted k-mer set size: " << predCount << std::endl;
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         //double* Fpool = new double[(l+1)* vertexExp];
@@ -529,9 +520,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         }
         hittingStream.close();
         topologicalSort();
-        cout << "PASHA set size: " << hits << endl;
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
-        return hits + predCount;
+        return hits;
     }
     int findLog(double base, double x) {
     /**

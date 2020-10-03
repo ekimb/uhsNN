@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     const double PI = 3.14159;
     string directory;
     ofstream decyclingStream(decyclingPath);
+    ofstream hittingStream(hittingPath);
     DOCKS docks = DOCKS(k);
     decycling newDecycling;
     vector<unsigned int> decyclingSet = newDecycling.computeDecyclingSet(k);
@@ -39,6 +40,7 @@ int main(int argc, char* argv[]) {
     cout << "Decycling set size: " << decyclingSize << endl;
     decyclingStream.close();
     string line;
+    int preds;
     std::ifstream file("../preds.txt");
     std::vector<record> v;
     while (std::getline(file, line)) {
@@ -49,14 +51,20 @@ int main(int argc, char* argv[]) {
         r.index = docks.getIndex(r.kmer);
         std::getline( is, s, '\t' );
         r.pred = std::stof(s);
-        v.push_back(r);
+        if (r.pred >= threshold) {
+            preds++;
+            hittingStream << r.kmer << "\n";
+            v.push_back(r);
+        }
     }
     clock_gettime(CLOCK_MONOTONIC, &start);
-    int hittingSize = docks.HittingRandomParallel(L, hittingPath, threshold, threads, v);
+    int hits = docks.HittingRandomParallel(L, hittingPath, threshold, threads, v);
     clock_gettime(CLOCK_MONOTONIC, &finish);
     elapsed = (finish.tv_sec - start.tv_sec);
     elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     cout << elapsed << " seconds." << endl; 
-    cout << "Hitting set size: " << hittingSize + decyclingSize << endl << endl;
+    cout << "Prediction set size: " << preds << endl;
+    cout << "PASHA set size: " << hits << endl;
+    cout << "Hitting set size: " << preds + hits + decyclingSize << endl << endl;
     return 0;
 }
