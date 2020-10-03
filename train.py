@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=10
+maxk=9
 maxmaxk=15
 
 total_labels=np.empty(0,dtype=np.int8)
