@@ -264,7 +264,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
     @param L: Sequence length.
     @return 1: True if path calculation completes.
     */
-        //omp_set_dynamic(0);
+        omp_set_dynamic(0);
         curr = 1;
         vertexExp2 = vertexExp * 2;
         vertexExp3 = vertexExp * 3;
