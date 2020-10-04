@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 import os
 mink=5
-maxk=9
+maxk=10
 maxmaxk=15
 
 total_labels=np.empty(0,dtype=np.int8)
@@ -46,4 +46,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=64, batch_size=1024)
 
-model.save("PASHAmodel10.h5")
+model.save("PASHAmodel11.h5")
