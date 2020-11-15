@@ -1,0 +1,9 @@
+K=$1
+L=$2
+MOD=$3
+T=$4
+N=$5
+build/predict nopreds.txt $K $L decyc_$K.txt $K_$L_nopred.txt 0.0 24
+python predict.py -k $K -L $L -m $MOD -t $T -n $N
+
+
