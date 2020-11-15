@@ -47,7 +47,6 @@ if __name__ == "__main__":
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
     start = timer()
     labels=model.predict(lstkL, batch_size=8192, workers=args.n, use_multiprocessing=True)
-    keras.backend.learning_phase(0)
     end = timer()
     labels[decycling]=2
     print(labels.shape)
