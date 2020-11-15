@@ -1,9 +1,9 @@
 for L in 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200
 do
-build/predict nopreds.txt 11 $L decyc11.txt 11_$L_nopred.txt 0.0 48
+build/predict nopreds.txt 11 $L decyc11.txt 11_$L_nopred.txt 0.0 64
 for T in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
 do
-python predict.py -k 11 -L $L -m model_11.h5 -t $T -n 48
+python predict.py -k 11 -L $L -m model_11.h5 -t $T -n 64
 done
 done
 
