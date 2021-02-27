@@ -8,7 +8,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Trains the model for provided k-mer lengths (k0, k1).')
 	parser.add_argument('-k0', metavar='k0', type=int, help='Minimum k-mer size for the UHS')
 	parser.add_argument('-k1', metavar= 'k1', type=int, help='Maximum k-mer size for the UHS')
-	parser.add_argument('-o', metavar='o', help='Output prefix')
+	parser.add_argument('-p', metavar='p', help='Model prefix')
 	parser.add_argument('-e', metavar='e', help='Number of epochs')
 	parser.add_argument('-b', metavar='b', help='Batch size')
 
