@@ -46,7 +46,7 @@ if __name__ == "__main__":
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
     start = timer()
-    labels=model.predict(lstkL, batch_size=8192, workers=args.n, use_multiprocessing=True)
+    labels=model.predict(lstkL, batch_size=4096, workers=args.n, use_multiprocessing=True)
     end = timer()
     labels[decycling]=2
     print(labels.shape)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     outF.close()
     predTime = end - start
     print("Predictions done, took " + str(predTime) + " seconds.")
-    print("Starting DOCKS...")
+    print("Starting PASHA...")
     start = timer()
     command = "./predict preds.txt " + str(k) + " " + str(L) + " decyc" + str(k) + ".txt " +  str(k) + str(L) + "_predicted.txt " + str(args.t) + " " + str(args.n)
     print(command)
@@ -68,6 +68,6 @@ if __name__ == "__main__":
     output = stream.read()
     print(output)
     end = timer()
-    DOCKStime = end - start
-    print("PDOCKS done, took " + str(DOCKStime) + " seconds.")
-    print("Total is " + str(predTime+DOCKStime) + " seconds.")
+    PASHAtime = end - start
+    print("PASHA done, took " + str(PASHAtime) + " seconds.")
+    print("Total is " + str(predTime+PASHAtime) + " seconds.")
