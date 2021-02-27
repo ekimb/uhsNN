@@ -1,7 +1,7 @@
 import argparse
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import load_model
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.models import load_model
 import numpy as np
 import pandas as pd
 import os
