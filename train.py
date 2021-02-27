@@ -2,16 +2,17 @@ import numpy as np
 import pandas as pd
 import itertools
 import os
+import argparse
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Trains the model for provided k-mer lengths (k0, k1).')
-    parser.add_argument('-k0', metavar='k0', type=int, help='Minimum k-mer size for the UHS')
-    parser.add_argument('-k1', metavar= 'k1', type=int, help='Maximum k-mer size for the UHS')
-    parser.add_argument('-o', metavar='o', help='Output prefix')
+	parser = argparse.ArgumentParser(description='Trains the model for provided k-mer lengths (k0, k1).')
+	parser.add_argument('-k0', metavar='k0', type=int, help='Minimum k-mer size for the UHS')
+	parser.add_argument('-k1', metavar= 'k1', type=int, help='Maximum k-mer size for the UHS')
+	parser.add_argument('-o', metavar='o', help='Output prefix')
 	parser.add_argument('-e', metavar='e', help='Number of epochs')
 	parser.add_argument('-b', metavar='b', help='Batch size')
 
-
+args = parser.parse_args()
 mink=args.k0
 maxk=args.k1
 maxmaxk=15
@@ -56,4 +57,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=int(args.e), batch_size=int(args.b))
 
-model.save(str(args.o))
+model.save(str(args.o) + ".h5")
