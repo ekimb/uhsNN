@@ -57,4 +57,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[metrics.AUC(),'accuracy'])
 model.fit(total_lst, total_labels, epochs=int(args.e), batch_size=int(args.b))
 
-model.save(str(args.o) + ".h5")
+model.save(str(args.p) + ".h5")
