@@ -46,7 +46,7 @@ if __name__ == "__main__":
     lstL = np.append(np.full(lst.shape[0], L).reshape(lst.shape[0],1), padlst, axis=1)
     lstkL = np.append(np.full(lst.shape[0], k).reshape(lstL.shape[0],1), lstL, axis=1)
     start = timer()
-    labels=model.predict(lstkL, batch_size=16384, workers=args.n, use_multiprocessing=True)
+    labels=model.predict(lstkL, batch_size=32768, workers=args.n, use_multiprocessing=True)
     end = timer()
     labels[decycling]=2
     print(labels.shape)
