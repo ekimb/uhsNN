@@ -335,7 +335,7 @@ class DOCKS {
             stageVertices = pushBackVector(threads);
             cout << "Stage size: " << stageVertices.size() << endl;
             int CHUNK_SIZE = stageVertices.size() / threads;
-            if stageVertices.size() <= threads {
+            if (stageVertices.size() <= threads) {
                 CHUNK_SIZE = 1;
             }
             #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
