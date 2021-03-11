@@ -71,7 +71,7 @@ class DOCKS {
         edgeNum = pow(ALPHABET_SIZE, k);
         cout << "Constructing edges..." << endl;
         vector<bool> edgeArray(edgeNum, true);
-        cout << "Constructed edges of size " << edgeArray.size() << " and value " << edgeArray.at(0) << endl;
+        cout << "Constructed edges."  << endl;
         generateGraph(k);
         map<char, int> alphabetMap;
         for (int i = 0; i < ALPHABET_SIZE; i++) alphabetMap.insert(pair<char,int>(ALPHABET[i], i));
@@ -82,7 +82,7 @@ class DOCKS {
     Generates a complete de Bruijn graph of order k.
     @param k: Desired k-mer length (order of complete graph).
     */
-        //for (int i = 0; i < edgeNum; i++) edgeArray.push_back(true);
+        for (int i = 0; i < edgeNum; i++) edgeArray.push_back(true);
         edgeCount = edgeNum;
         vertexCount = edgeNum / ALPHABET_SIZE; 
     }
