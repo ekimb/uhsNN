@@ -352,6 +352,7 @@ class DOCKS {
             }
             #pragma omp parallel num_threads(threads)
             {
+                srand(int(time(NULL)) ^ omp_get_thread_num());
                 #pragma omp for schedule(static, CHUNK_SIZE)
                 for (int it = 0; it < stageVertices.size(); it++) {
                     for (int jt = 0; jt < stageVertices.size(); jt++) {
