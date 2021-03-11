@@ -391,7 +391,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                     if ((!pick[i]) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
                         stageArray[i] = 0;
                         pick[i] = true;
-                        #pragma omp single
+                        #pragma omp critical
                         {
                             hittingCountStage++;
                             pathCountStage += hittingNumArray[i];
@@ -406,7 +406,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                             if (((double) rand() / (RAND_MAX)) <= prob) {
                                 stageArray[i] = 0;
                                 pick[i] = true;
-                                #pragma omp single
+                                #pragma omp critical
                                 {
                                     hittingCountStage += 1;
                                     pathCountStage += hittingNumArray[i];
@@ -429,7 +429,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                         }
                     }
                 }
-                #pragma omp single
+                #pragma omp critical
                 {
                     hittingCount += hittingCountStage;
                 }
@@ -440,7 +440,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                         if (pick[i] == true) {
                             removeEdge(i);
                             string label = getLabel(i);
-                            #pragma omp single 
+                            #pragma omp critical 
                             {
                                 hittingStream << label << "\n";
                                 hits++;
@@ -450,17 +450,18 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                     h--;
                 }
                 else {
-                    #pragma omp single 
+                    #pragma omp critical 
                     {
                         hittingCount -= hittingCountStage;
                     }
                 }
             }
-        }
         hittingStream.close();
         topologicalSort();
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
         return hits;
+        }
+        
     }
     int findLog(double base, double x) {
     /**
