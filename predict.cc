@@ -29,7 +29,9 @@ int main(int argc, char* argv[]) {
     ofstream decyclingStream(decyclingPath);
     ofstream hittingStream(hittingPath);
     DOCKS docks = DOCKS(k);
+    cout << "Built graph object." << endl;
     decycling newDecycling;
+    cout << "Computing decycling set..." << endl;
     vector<unsigned int> decyclingSet = newDecycling.computeDecyclingSet(k);
     for (int i = 0; i < decyclingSet.size(); i++) {
         string label = docks.getLabel(decyclingSet[i]);
@@ -37,7 +39,7 @@ int main(int argc, char* argv[]) {
         decyclingStream << label << "\n";
     }
     int decyclingSize = decyclingSet.size();
-    cout << "Decycling set size: " << decyclingSize << endl;
+    cout << "Done! Set size: " << decyclingSize << endl;
     decyclingStream.close();
     string line;
     int preds = 0;
