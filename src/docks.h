@@ -353,6 +353,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             ofstream hittingStream(hittingPath);
             int hittingCount = 0;
             l = L-k+1;
+            int i, j;
             delta = 1/(double)l;
             epsilon = (1-8*(delta))/4;
             double alpha = 1 - 4*delta -2*epsilon;
