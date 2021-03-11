@@ -324,6 +324,7 @@ class DOCKS {
         h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
         double prob = delta/(double)l;
         while (h > 0) {
+            cout << "H is " << h << endl;
             total = 0;
             int hittingCountStage = 0;
             double pathCountStage = 0;
