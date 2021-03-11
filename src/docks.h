@@ -69,7 +69,7 @@ class DOCKS {
         ALPHABET_SIZE = 4;
         k = argK;
         edgeNum = pow(ALPHABET_SIZE, k);
-        edgeArray = new vector<bool>(edgeNum, true);
+        vector<bool> edgeArray(edgeNum, true);
         generateGraph(k);
         map<char, int> alphabetMap;
         for (int i = 0; i < ALPHABET_SIZE; i++) alphabetMap.insert(pair<char,int>(ALPHABET[i], i));
