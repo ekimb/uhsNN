@@ -35,8 +35,11 @@ int main(int argc, char* argv[]) {
     vector<unsigned int> decyclingSet = newDecycling.computeDecyclingSet(k);
     for (int i = 0; i < decyclingSet.size(); i++) {
         string label = docks.getLabel(decyclingSet[i]);
+        cout << label << endl;
         docks.removeEdge(decyclingSet[i]);
         decyclingStream << label << "\n";
+        cout << "Removed." << endl;
+
     }
     int decyclingSize = decyclingSet.size();
     cout << "Done! Set size: " << decyclingSize << endl;
