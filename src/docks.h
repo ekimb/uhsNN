@@ -319,16 +319,14 @@ class DOCKS {
         {
             #pragma omp for schedule(static)
             for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
-            #pragma omp single
-            {
-                topologicalSort();
-                cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
-                calculatePaths(l, threads);
-                int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
-                cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
-                h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
-                double prob = delta/(double)l;
-            }
+        }
+        topologicalSort();
+        cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
+        calculatePaths(l, threads);
+        int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
+        cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
+        h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
+        double prob = delta/(double)l;
             while (h > 0) {
                 total = 0;
                 int hittingCountStage = 0;
@@ -337,74 +335,77 @@ class DOCKS {
                 imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
                 if (exit == -1) break;
                 stageVertices = pushBackVector();
-                #pragma omp for schedule(static)
-                for (int it = 0; it < stageVertices.size(); it++) {
-                    i = stageVertices[it];
-                    if ((!pick[i]) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
-                        stageArray[i] = 0;
-                        pick[i] = true;
-                        #pragma omp critical
-                        {
-                            hittingCountStage++;
-                            pathCountStage += hittingNumArray[i];
+                #pragma omp parallel num_threads(threads)
+                {
+                    #pragma omp for schedule(static)
+                    for (int it = 0; it < stageVertices.size(); it++) {
+                        i = stageVertices[it];
+                        if ((!pick[i]) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
+                            stageArray[i] = 0;
+                            pick[i] = true;
+                            #pragma omp critical
+                            {
+                                hittingCountStage++;
+                                pathCountStage += hittingNumArray[i];
+                            }
                         }
                     }
-                }
-                #pragma omp for schedule(static)
-                for (int it = 0; it < stageVertices.size(); it++) {
-                    for (int jt = 0; jt < stageVertices.size(); jt++) {
-                        i = stageVertices[it];
-                        if (!pick[i]) {
-                            if (((double) rand() / (RAND_MAX)) <= prob) {
-                                stageArray[i] = 0;
-                                pick[i] = true;
-                                #pragma omp critical
-                                {
-                                    hittingCountStage += 1;
-                                    pathCountStage += hittingNumArray[i];
-                                }
-                            }
-                            j = stageVertices[jt];
-                            if (!pick[j]) {
+                    #pragma omp for schedule(static)
+                    for (int it = 0; it < stageVertices.size(); it++) {
+                        for (int jt = 0; jt < stageVertices.size(); jt++) {
+                            i = stageVertices[it];
+                            if (!pick[i]) {
                                 if (((double) rand() / (RAND_MAX)) <= prob) {
-                                    stageArray[j] = 0;
-                                    pick[j] = true;
+                                    stageArray[i] = 0;
+                                    pick[i] = true;
                                     #pragma omp critical
                                     {
                                         hittingCountStage += 1;
                                         pathCountStage += hittingNumArray[i];
                                     }
-
                                 }
-                                else pick[i] = false;
+                                j = stageVertices[jt];
+                                if (!pick[j]) {
+                                    if (((double) rand() / (RAND_MAX)) <= prob) {
+                                        stageArray[j] = 0;
+                                        pick[j] = true;
+                                        #pragma omp critical
+                                        {
+                                            hittingCountStage += 1;
+                                            pathCountStage += hittingNumArray[i];
+                                        }
+
+                                    }
+                                    else pick[i] = false;
+                                }
                             }
                         }
                     }
-                }
-                #pragma omp critical
-                {
-                    hittingCount += hittingCountStage;
-                }
-                if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
-                    #pragma omp for schedule(static)
-                    for (int it = 0; it < stageVertices.size(); it++) {
-                        i = stageVertices[it];
-                        if (pick[i] == true) {
-                            removeEdge(i);
-                            string label = getLabel(i);
-                            #pragma omp critical 
-                            {
-                                hittingStream << label << "\n";
-                                hits++;
-                            }
-                        }
-                    }
-                    h--;
-                }
-                else {
-                    #pragma omp critical 
+                    #pragma omp critical
                     {
-                        hittingCount -= hittingCountStage;
+                        hittingCount += hittingCountStage;
+                    }
+                    if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
+                        #pragma omp for schedule(static)
+                        for (int it = 0; it < stageVertices.size(); it++) {
+                            i = stageVertices[it];
+                            if (pick[i] == true) {
+                                removeEdge(i);
+                                string label = getLabel(i);
+                                #pragma omp critical 
+                                {
+                                    hittingStream << label << "\n";
+                                    hits++;
+                                }
+                            }
+                        }
+                        h--;
+                    }
+                    else {
+                        #pragma omp critical 
+                        {
+                            hittingCount -= hittingCountStage;
+                        }
                     }
                 }
             }
