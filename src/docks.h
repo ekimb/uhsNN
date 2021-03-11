@@ -297,29 +297,26 @@ class DOCKS {
         omp_set_dynamic(0);
         srand (1);
         int hits = 0;
+        vertexExp = pow(ALPHABET_SIZE, k-1);
+        ofstream hittingStream(hittingPath);
+        int hittingCount = 0;
+        l = L-k+1;
+        int i, j;
+        delta = 1/(double)l;
+        epsilon = (1-8*(delta))/4;
+        double alpha = 1 - 4*delta -2*epsilon;
+        cout << "Alpha: " << 1/alpha << endl << "Delta: " << delta << endl << "Epsilon: " << epsilon << endl;
+        hittingNumArray = new double[(int)edgeNum];
+        stageArray = new byte8[(int)edgeNum];
+        used = new byte8[vertexExp];
+        finished = new byte8[vertexExp];
+        pick = new byte8[(int)edgeNum];
+        topoSort = new int[vertexExp];
+        D = new float*[l + 1];
+        Fcurr = new float[vertexExp];
+        Fprev = new float[vertexExp];
         #pragma omp parallel num_threads(threads)
         {
-            #pragma omp single
-            {
-                vertexExp = pow(ALPHABET_SIZE, k-1);
-                ofstream hittingStream(hittingPath);
-                int hittingCount = 0;
-                l = L-k+1;
-                int i, j;
-                delta = 1/(double)l;
-                epsilon = (1-8*(delta))/4;
-                double alpha = 1 - 4*delta -2*epsilon;
-                cout << "Alpha: " << 1/alpha << endl << "Delta: " << delta << endl << "Epsilon: " << epsilon << endl;
-                hittingNumArray = new double[(int)edgeNum];
-                stageArray = new byte8[(int)edgeNum];
-                used = new byte8[vertexExp];
-                finished = new byte8[vertexExp];
-                pick = new byte8[(int)edgeNum];
-                topoSort = new int[vertexExp];
-                D = new float*[l + 1];
-                Fcurr = new float[vertexExp];
-                Fprev = new float[vertexExp];
-            }
             #pragma omp for schedule(static)
             for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
             #pragma omp single
