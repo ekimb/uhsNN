@@ -330,6 +330,7 @@ class DOCKS {
             double pathCountStage = 0;
             calculatePaths(l, threads);
             imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
+            cout << "Calculated hitting numbers." << endl;
             if (exit == -1) break;
             stageVertices = pushBackVector(threads);
             int CHUNK_SIZE = stageVertices.size() / threads;
