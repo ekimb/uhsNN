@@ -294,7 +294,6 @@ class DOCKS {
     @return hittingCount: Size of hitting set.
     */
         omp_set_dynamic(0);
-        srand (1);
         int hits = 0;
         vertexExp = pow(ALPHABET_SIZE, k-1);
         ofstream hittingStream(hittingPath);
@@ -356,6 +355,7 @@ class DOCKS {
                 for (int jt = 0; jt < stageVertices.size(); jt++) {
                     i = stageVertices[it];
                     if (!pick[i]) {
+                        srand (1);
                         if (((double) rand() / (RAND_MAX)) <= prob) {
                             stageArray[i] = 0;
                             pick[i] = true;
@@ -367,6 +367,7 @@ class DOCKS {
                         }
                         j = stageVertices[jt];
                         if (!pick[j]) {
+                            srand (1);
                             if (((double) rand() / (RAND_MAX)) <= prob) {
                                 stageArray[j] = 0;
                                 pick[j] = true;
