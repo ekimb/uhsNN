@@ -419,7 +419,6 @@ class DOCKS {
         int CHUNK_SIZE = (int)edgeNum / threads;
         #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
         for(int i = 0; i < (int)edgeNum; i++) {
-            cout << i << endl;
             if (stageArray[i] == 1) stageVertices.push_back(i);
         }
         return stageVertices;
