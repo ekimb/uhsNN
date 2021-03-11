@@ -417,7 +417,6 @@ class DOCKS {
     vector<int> pushBackVector(int threads) {
         vector<int> stageVertices;
         int CHUNK_SIZE = (int)edgeNum / threads;
-        #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
         for(int i = 0; i < (int)edgeNum; i++) {
             if (stageArray[i] == 1) stageVertices.push_back(i);
         }
