@@ -350,35 +350,36 @@ class DOCKS {
                     }
                 }
             }
-            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
-            for (int it = 0; it < stageVertices.size(); it++) {
-                for (int jt = 0; jt < stageVertices.size(); jt++) {
-                    i = stageVertices[it];
-                    if (!pick[i]) {
-                        srand (1);
-                        if (((double) rand() / (RAND_MAX)) <= prob) {
-                            stageArray[i] = 0;
-                            pick[i] = true;
-                            #pragma omp critical
-                            {
-                                hittingCountStage += 1;
-                                pathCountStage += hittingNumArray[i];
-                            }
-                        }
-                        j = stageVertices[jt];
-                        if (!pick[j]) {
-                            srand (1);
+            #pragma omp parallel num_threads(threads)
+            {
+                #pragma omp for schedule(static, CHUNK_SIZE)
+                for (int it = 0; it < stageVertices.size(); it++) {
+                    for (int jt = 0; jt < stageVertices.size(); jt++) {
+                        i = stageVertices[it];
+                        if (!pick[i]) {
                             if (((double) rand() / (RAND_MAX)) <= prob) {
-                                stageArray[j] = 0;
-                                pick[j] = true;
+                                stageArray[i] = 0;
+                                pick[i] = true;
                                 #pragma omp critical
                                 {
                                     hittingCountStage += 1;
                                     pathCountStage += hittingNumArray[i];
                                 }
-
                             }
-                            else pick[i] = false;
+                            j = stageVertices[jt];
+                            if (!pick[j]) {
+                                if (((double) rand() / (RAND_MAX)) <= prob) {
+                                    stageArray[j] = 0;
+                                    pick[j] = true;
+                                    #pragma omp critical
+                                    {
+                                        hittingCountStage += 1;
+                                        pathCountStage += hittingNumArray[i];
+                                    }
+
+                                }
+                                else pick[i] = false;
+                            }
                         }
                     }
                 }
