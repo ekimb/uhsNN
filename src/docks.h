@@ -459,8 +459,8 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         hittingStream.close();
         topologicalSort();
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
-        return hits;
         }
+        return hits;
         
     }
     int findLog(double base, double x) {
