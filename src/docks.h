@@ -71,7 +71,7 @@ class DOCKS {
         edgeNum = pow(ALPHABET_SIZE, k);
         cout << "Constructing edges..." << endl;
         vector<bool> edgeArray(edgeNum, true);
-        cout << "Done!" << endl;
+        cout << "Constructed edges of size " << edgeArray.size() << " and value " << edgeArray.at(0) << endl;
         generateGraph(k);
         map<char, int> alphabetMap;
         for (int i = 0; i < ALPHABET_SIZE; i++) alphabetMap.insert(pair<char,int>(ALPHABET[i], i));
@@ -150,7 +150,7 @@ class DOCKS {
     Removes an edge from the graph.
     @param i: Index of edge.
     */
-        if (edgeArray[i] == true) edgeCount--;
+        if (edgeArray.at(i) == true) edgeCount--;
         edgeArray.at(i) = false;
     }
 
