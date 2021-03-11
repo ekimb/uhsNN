@@ -216,39 +216,38 @@ class DOCKS {
     @return 1: True if path calculation completes.
     */
         omp_set_dynamic(0);
-        #pragma omp parallel num_threads(threads)
-        { 
-            curr = 1;
-            vertexExp2 = vertexExp * 2;
-            vertexExp3 = vertexExp * 3;
-            vertexExpMask = vertexExp - 1;
-            vertexExp_1 = pow(ALPHABET_SIZE, k-2);
-            #pragma omp for schedule(static)
-            for (int i = 0; i < vertexExp; i++) {D[0][i] = 1.4e-45;Fprev[i] = 1.4e-45;}
-            #pragma omp for schedule(static)
-            for (int j = 1; j <= L; j++) {
-                for (int i = 0; i < vertexExp; i++) {
-                    D[j][i] = edgeArray[i]*D[j-1][(i >> 2)] + edgeArray[i + vertexExp]*D[j-1][((i + vertexExp) >> 2)] + edgeArray[i + vertexExp2]*D[j-1][((i + vertexExp2) >> 2)] + edgeArray[i + vertexExp3]*D[j-1][((i + vertexExp3) >> 2)];
-                }
+        curr = 1;
+        vertexExp2 = vertexExp * 2;
+        vertexExp3 = vertexExp * 3;
+        vertexExpMask = vertexExp - 1;
+        vertexExp_1 = pow(ALPHABET_SIZE, k-2);
+        int CHUNK_SIZE = vertexExp / threads;
+        #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+        for (int i = 0; i < vertexExp; i++) {D[0][i] = 1.4e-45;Fprev[i] = 1.4e-45;}
+        for (int j = 1; j <= L; j++) {
+            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+            for (int i = 0; i < vertexExp; i++) {
+                D[j][i] = edgeArray[i]*D[j-1][(i >> 2)] + edgeArray[i + vertexExp]*D[j-1][((i + vertexExp) >> 2)] + edgeArray[i + vertexExp2]*D[j-1][((i + vertexExp2) >> 2)] + edgeArray[i + vertexExp3]*D[j-1][((i + vertexExp3) >> 2)];
             }
-            #pragma omp for schedule(static)
-            for (int i = 0; i < (int)edgeNum; i++) hittingNumArray[i] = 0;
-            while (curr <= L) {
-                #pragma omp for schedule(static)
-                for (int i = 0; i < vertexExp; i++) {
-                    int index = (i * 4);
-                    Fcurr[i] = edgeArray[index]*Fprev[index & vertexExpMask] + edgeArray[index + 1]*Fprev[(index + 1) & vertexExpMask] + edgeArray[index + 2]*Fprev[(index + 2) & vertexExpMask] + edgeArray[index + 3]*Fprev[(index + 3) & vertexExpMask];
-                }
-                #pragma omp for schedule(static)
-                for (int i = 0; i < (int)edgeNum; i++) {
-                    hittingNumArray[i] += (Fprev[i % vertexExp]/1.4e-45) * (D[(L-curr)][i / ALPHABET_SIZE]/1.4e-45);
-                    if (edgeArray[i] == false) hittingNumArray[i] = 0;
-                }
-                #pragma omp for schedule(static)
-                for (int i = 0; i < vertexExp; i++) Fprev[i] = Fcurr[i];
-                #pragma omp single
-                curr++;
+        }
+        int CHUNK_SIZE_EDGE = (int)edgeNum / threads;
+        #pragma omp parallel for schedule(static, CHUNK_SIZE_EDGE) num_threads(threads)
+        for (int i = 0; i < (int)edgeNum; i++) hittingNumArray[i] = 0;
+        while (curr <= L) {
+            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+            for (int i = 0; i < vertexExp; i++) {
+                int index = (i * 4);
+                Fcurr[i] = edgeArray[index]*Fprev[index & vertexExpMask] + edgeArray[index + 1]*Fprev[(index + 1) & vertexExpMask] + edgeArray[index + 2]*Fprev[(index + 2) & vertexExpMask] + edgeArray[index + 3]*Fprev[(index + 3) & vertexExpMask];
             }
+            #pragma omp parallel for schedule(static, CHUNK_SIZE_EDGE) num_threads(threads)
+            for (int i = 0; i < (int)edgeNum; i++) {
+                hittingNumArray[i] += (Fprev[i % vertexExp]/1.4e-45) * (D[(L-curr)][i / ALPHABET_SIZE]/1.4e-45);
+                if (edgeArray[i] == false) hittingNumArray[i] = 0;
+            }
+            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+            for (int i = 0; i < vertexExp; i++) Fprev[i] = Fcurr[i];
+            #pragma omp single
+            curr++;
         }
         return 1;
     }
@@ -315,11 +314,8 @@ class DOCKS {
         D = new float*[l + 1];
         Fcurr = new float[vertexExp];
         Fprev = new float[vertexExp];
-        #pragma omp parallel num_threads(threads)
-        {
-            #pragma omp for schedule(static)
-            for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
-        }
+        #pragma omp parallel for schedule(static) num_threads(threads)
+        for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
         topologicalSort();
         cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
         calculatePaths(l, threads);
@@ -327,92 +323,83 @@ class DOCKS {
         cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
         h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
         double prob = delta/(double)l;
-            while (h > 0) {
-                total = 0;
-                int hittingCountStage = 0;
-                double pathCountStage = 0;
-                calculatePaths(l, threads);
-                imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
-                if (exit == -1) break;
-                stageVertices = pushBackVector();
-                #pragma omp parallel num_threads(threads)
-                {
-                    #pragma omp for schedule(static)
-                    for (int it = 0; it < stageVertices.size(); it++) {
-                        i = stageVertices[it];
-                        if ((!pick[i]) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
+        while (h > 0) {
+            total = 0;
+            int hittingCountStage = 0;
+            double pathCountStage = 0;
+            calculatePaths(l, threads);
+            imaxHittingNum = calculateHittingNumberParallel(l, true, threads);
+            if (exit == -1) break;
+            stageVertices = pushBackVector(threads);
+            int CHUNK_SIZE = stageVertices.size() / threads;
+            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+            for (int it = 0; it < stageVertices.size(); it++) {
+                i = stageVertices[it];
+                if ((!pick[i]) && (hittingNumArray[i] > (pow(delta, 3) * total))) {
+                    stageArray[i] = 0;
+                    pick[i] = true;
+                    #pragma omp critical
+                    {
+                        hittingCountStage++;
+                        pathCountStage += hittingNumArray[i];
+                    }
+                }
+            }
+            #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+            for (int it = 0; it < stageVertices.size(); it++) {
+                for (int jt = 0; jt < stageVertices.size(); jt++) {
+                    i = stageVertices[it];
+                    if (!pick[i]) {
+                        if (((double) rand() / (RAND_MAX)) <= prob) {
                             stageArray[i] = 0;
                             pick[i] = true;
                             #pragma omp critical
                             {
-                                hittingCountStage++;
+                                hittingCountStage += 1;
                                 pathCountStage += hittingNumArray[i];
                             }
                         }
-                    }
-                    #pragma omp for schedule(static)
-                    for (int it = 0; it < stageVertices.size(); it++) {
-                        for (int jt = 0; jt < stageVertices.size(); jt++) {
-                            i = stageVertices[it];
-                            if (!pick[i]) {
-                                if (((double) rand() / (RAND_MAX)) <= prob) {
-                                    stageArray[i] = 0;
-                                    pick[i] = true;
-                                    #pragma omp critical
-                                    {
-                                        hittingCountStage += 1;
-                                        pathCountStage += hittingNumArray[i];
-                                    }
-                                }
-                                j = stageVertices[jt];
-                                if (!pick[j]) {
-                                    if (((double) rand() / (RAND_MAX)) <= prob) {
-                                        stageArray[j] = 0;
-                                        pick[j] = true;
-                                        #pragma omp critical
-                                        {
-                                            hittingCountStage += 1;
-                                            pathCountStage += hittingNumArray[i];
-                                        }
-
-                                    }
-                                    else pick[i] = false;
-                                }
-                            }
-                        }
-                    }
-                    #pragma omp critical
-                    {
-                        hittingCount += hittingCountStage;
-                    }
-                    if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
-                        #pragma omp for schedule(static)
-                        for (int it = 0; it < stageVertices.size(); it++) {
-                            i = stageVertices[it];
-                            if (pick[i] == true) {
-                                removeEdge(i);
-                                string label = getLabel(i);
-                                #pragma omp critical 
+                        j = stageVertices[jt];
+                        if (!pick[j]) {
+                            if (((double) rand() / (RAND_MAX)) <= prob) {
+                                stageArray[j] = 0;
+                                pick[j] = true;
+                                #pragma omp critical
                                 {
-                                    hittingStream << label << "\n";
-                                    hits++;
+                                    hittingCountStage += 1;
+                                    pathCountStage += hittingNumArray[i];
                                 }
+
                             }
-                        }
-                        h--;
-                    }
-                    else {
-                        #pragma omp critical 
-                        {
-                            hittingCount -= hittingCountStage;
+                            else pick[i] = false;
                         }
                     }
                 }
             }
+            hittingCount += hittingCountStage;
+            if (pathCountStage >= hittingCountStage * pow((1.0 + epsilon), h) * (1 - 4*delta - 2*epsilon)) {
+                #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+                for (int it = 0; it < stageVertices.size(); it++) {
+                    i = stageVertices[it];
+                    if (pick[i] == true) {
+                        removeEdge(i);
+                        string label = getLabel(i);
+                        #pragma omp critical 
+                        {
+                            hittingStream << label << "\n";
+                            hits++;
+                        }
+                    }
+                }
+                h--;
+            }
+            else {
+                hittingCount -= hittingCountStage;
+            }
+        }
         hittingStream.close();
         topologicalSort();
         cout << "Length of longest remaining path: " <<  maxLength() << "\n";
-        }
         return hits;
         
     }
@@ -424,8 +411,10 @@ class DOCKS {
     */
         return (int)(log(x) / log(base));
     }
-    vector<int> pushBackVector() {
+    vector<int> pushBackVector(threads) {
         vector<int> stageVertices;
+        int CHUNK_SIZE = (int)edgeNum / threads;
+        #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
         for(int i = 0; i < (int)edgeNum; i++) {
             if (stageArray[i] == 1) stageVertices.push_back(i);
         }
@@ -442,32 +431,30 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
         int imaxHittingNum = 0;
         int count = 0;
         exit = -1;
-        #pragma omp parallel num_threads(threads)
-        {
-            #pragma omp for schedule(static)
-            for (int i = 0; i < (int)edgeNum; i++) {
-                if (random == true) {
-                    if (((hittingNumArray[i]) >= pow((1.0+epsilon), h-1)) && ((hittingNumArray[i]) <= pow((1.0+epsilon), h))) {
-                        stageArray[i] = 1;
-                        pick[i] = false;
-                        #pragma omp critical
-                        {
-                            total += hittingNumArray[i] * stageArray[i];
-                            count++;
-                        }
+        int CHUNK_SIZE = (int)edgeNum / threads;
+        #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+        for (int i = 0; i < (int)edgeNum; i++) {
+            if (random == true) {
+                if (((hittingNumArray[i]) >= pow((1.0+epsilon), h-1)) && ((hittingNumArray[i]) <= pow((1.0+epsilon), h))) {
+                    stageArray[i] = 1;
+                    pick[i] = false;
+                    #pragma omp critical
+                    {
+                        total += hittingNumArray[i] * stageArray[i];
+                        count++;
                     }
-                    else {
-                        stageArray[i] = 0;
-                        pick[i] = false;
-                    }   
                 }
+                else {
+                    stageArray[i] = 0;
+                    pick[i] = false;
+                }   
             }
-            #pragma omp for schedule(static)
-            for (int i = 0; i < (int)edgeNum; i++) {
-                if ((hittingNumArray[i])*edgeArray[i] > maxHittingNum) {
-                    maxHittingNum = hittingNumArray[i]; imaxHittingNum = i;
-                    exit = 0;
-                }
+        }
+        #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
+        for (int i = 0; i < (int)edgeNum; i++) {
+            if ((hittingNumArray[i])*edgeArray[i] > maxHittingNum) {
+                maxHittingNum = hittingNumArray[i]; imaxHittingNum = i;
+                exit = 0;
             }
         }
         return imaxHittingNum;
