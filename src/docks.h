@@ -411,7 +411,7 @@ class DOCKS {
     */
         return (int)(log(x) / log(base));
     }
-    vector<int> pushBackVector(threads) {
+    vector<int> pushBackVector(int threads) {
         vector<int> stageVertices;
         int CHUNK_SIZE = (int)edgeNum / threads;
         #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
