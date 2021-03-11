@@ -69,6 +69,7 @@ class DOCKS {
         ALPHABET_SIZE = 4;
         k = argK;
         edgeNum = pow(ALPHABET_SIZE, k);
+        cout << "Constructing edges..." << endl;
         vector<bool> edgeArray(edgeNum, true);
         generateGraph(k);
         map<char, int> alphabetMap;
