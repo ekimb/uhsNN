@@ -151,7 +151,7 @@ class DOCKS {
     @param i: Index of edge.
     */
         if (edgeArray[i] == true) edgeCount--;
-        edgeArray[i] = false;
+        edgeArray.at(i) = false;
     }
 
     void topologicalSort() {
