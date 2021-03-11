@@ -417,7 +417,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
                                 if (((double) rand() / (RAND_MAX)) <= prob) {
                                     stageArray[j] = 0;
                                     pick[j] = true;
-                                    #pragma omp single
+                                    #pragma omp critical
                                     {
                                         hittingCountStage += 1;
                                         pathCountStage += hittingNumArray[i];
