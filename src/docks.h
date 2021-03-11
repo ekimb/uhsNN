@@ -333,6 +333,7 @@ class DOCKS {
             cout << "Calculated hitting numbers." << endl;
             if (exit == -1) break;
             stageVertices = pushBackVector(threads);
+            cout << "Stage size: " << stageVertices.size() << endl;
             int CHUNK_SIZE = stageVertices.size() / threads;
             #pragma omp parallel for schedule(static, CHUNK_SIZE) num_threads(threads)
             for (int it = 0; it < stageVertices.size(); it++) {
