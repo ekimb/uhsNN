@@ -299,33 +299,39 @@ class DOCKS {
         int hits = 0;
         #pragma omp parallel num_threads(threads)
         {
-            vertexExp = pow(ALPHABET_SIZE, k-1);
-            ofstream hittingStream(hittingPath);
-            int hittingCount = 0;
-            l = L-k+1;
-            int i, j;
-            delta = 1/(double)l;
-            epsilon = (1-8*(delta))/4;
-            double alpha = 1 - 4*delta -2*epsilon;
-            cout << "Alpha: " << 1/alpha << endl << "Delta: " << delta << endl << "Epsilon: " << epsilon << endl;
-            hittingNumArray = new double[(int)edgeNum];
-            stageArray = new byte8[(int)edgeNum];
-            used = new byte8[vertexExp];
-            finished = new byte8[vertexExp];
-            pick = new byte8[(int)edgeNum];
-            topoSort = new int[vertexExp];
-            D = new float*[l + 1];
+            #pragma omp single
+            {
+                vertexExp = pow(ALPHABET_SIZE, k-1);
+                ofstream hittingStream(hittingPath);
+                int hittingCount = 0;
+                l = L-k+1;
+                int i, j;
+                delta = 1/(double)l;
+                epsilon = (1-8*(delta))/4;
+                double alpha = 1 - 4*delta -2*epsilon;
+                cout << "Alpha: " << 1/alpha << endl << "Delta: " << delta << endl << "Epsilon: " << epsilon << endl;
+                hittingNumArray = new double[(int)edgeNum];
+                stageArray = new byte8[(int)edgeNum];
+                used = new byte8[vertexExp];
+                finished = new byte8[vertexExp];
+                pick = new byte8[(int)edgeNum];
+                topoSort = new int[vertexExp];
+                D = new float*[l + 1];
+                Fcurr = new float[vertexExp];
+                Fprev = new float[vertexExp];
+            }
             #pragma omp for schedule(static)
             for(int i = 0; i < l+1; i++) {D[i] = new float[vertexExp];}
-            Fcurr = new float[vertexExp];
-            Fprev = new float[vertexExp];
-            topologicalSort();
-            cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
-            calculatePaths(l, threads);
-            int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
-            cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
-            h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
-            double prob = delta/(double)l;
+            #pragma omp single
+            {
+                topologicalSort();
+                cout << "Length of longest remaining path after model prediction: " <<  maxLength() << "\n";
+                calculatePaths(l, threads);
+                int imaxHittingNum = calculateHittingNumberParallel(l, false, threads);
+                cout << "Max hitting number: " << hittingNumArray[imaxHittingNum] << endl;
+                h = findLog((1.0+epsilon), hittingNumArray[imaxHittingNum]);
+                double prob = delta/(double)l;
+            }
             while (h > 0) {
                 total = 0;
                 int hittingCountStage = 0;
