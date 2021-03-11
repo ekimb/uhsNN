@@ -51,7 +51,7 @@ class DOCKS {
         int vertexExp3;
         int vertexExpMask;
         int vertexExp_1;
-        byte8* edgeArray;
+        vector<bool> edgeArray;
         byte8* stageArray;
         byte8* pick;
         int* topoSort;
@@ -69,7 +69,7 @@ class DOCKS {
         ALPHABET_SIZE = 4;
         k = argK;
         edgeNum = pow(ALPHABET_SIZE, k);
-        edgeArray = new byte8[(int)edgeNum];
+        edgeArray = new vector<bool>(edgeNum, true);
         generateGraph(k);
         map<char, int> alphabetMap;
         for (int i = 0; i < ALPHABET_SIZE; i++) alphabetMap.insert(pair<char,int>(ALPHABET[i], i));
@@ -80,7 +80,7 @@ class DOCKS {
     Generates a complete de Bruijn graph of order k.
     @param k: Desired k-mer length (order of complete graph).
     */
-        for (int i = 0; i < edgeNum; i++) edgeArray[i] = 1;
+        //for (int i = 0; i < edgeNum; i++) edgeArray.push_back(true);
         edgeCount = edgeNum;
         vertexCount = edgeNum / ALPHABET_SIZE; 
     }
@@ -135,7 +135,7 @@ class DOCKS {
             for (int j = 0; j < ALPHABET_SIZE; j++) {
                 int edgeIndex = topoSort[i] + j * vertexExp;
                 int vertexIndex = edgeIndex / ALPHABET_SIZE;
-                if ((depth[vertexIndex] > maxVertDepth) && (edgeArray[edgeIndex] == 1)) maxVertDepth = depth[vertexIndex];
+                if ((depth[vertexIndex] > maxVertDepth) && (edgeArray[edgeIndex] == true)) maxVertDepth = depth[vertexIndex];
             }
             depth[topoSort[i]] = maxVertDepth + 1;
             if (depth[topoSort[i]] > maxDepth) {maxDepth = depth[topoSort[i]];}
@@ -148,8 +148,8 @@ class DOCKS {
     Removes an edge from the graph.
     @param i: Index of edge.
     */
-        if (edgeArray[i] == 1) edgeCount--;
-        edgeArray[i] = 0;
+        if (edgeArray[i] == true) edgeCount--;
+        edgeArray[i] = false;
     }
 
     void topologicalSort() {
@@ -197,7 +197,7 @@ class DOCKS {
         int adjVertex[ALPHABET_SIZE];
         for (int i = 0; i < ALPHABET_SIZE; i++) {
             int index = v + i * vertexExp;
-            if (edgeArray[index] == 1) adjVertex[count++] = index / ALPHABET_SIZE;
+            if (edgeArray[index] == true) adjVertex[count++] = index / ALPHABET_SIZE;
         }
         vector<int> rc(count);
         for (int i = 0; i < count; i++) {
@@ -301,7 +301,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             #pragma omp parallel for num_threads(threads)
             for (int i = 0; i < (int)edgeNum; i++) {
                 hittingNumArray[i] += (Fprev[i % vertexExp]/1.4e-45) * (D[(L-curr)][i / ALPHABET_SIZE]/1.4e-45);
-                if (edgeArray[i] == 0) hittingNumArray[i] = 0;
+                if (edgeArray[i] == false) hittingNumArray[i] = 0;
             }
             #pragma omp parallel for num_threads(threads)
             for (int i = 0; i < vertexExp; i++) Fprev[i] = Fcurr[i];
@@ -373,7 +373,7 @@ Calculates hitting number of all edges, counting paths of length L-k+1, in paral
             //std::cout << it.kmer << it.index << it.pred << std::endl;
             if (v[i].pred >= threshold) {
                 //std::cout << "Found model prediction above threshold" << std::endl;
-                if (edgeArray[v[i].index] == 1) {
+                if (edgeArray[v[i].index] == true) {
                     predCount++;
                     removeEdge(v[i].index);
                     string label = v[i].kmer;
